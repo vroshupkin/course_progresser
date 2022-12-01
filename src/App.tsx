@@ -1,9 +1,14 @@
-import { ProgressBar } from './components/ProgressBars';
+import { MobxComponent, MobxTimer } from './components/MobxTimer';
+import { ProgressBar, ProgressBarStore } from './components/ProgressBars';
+
+const progressBarStore = new ProgressBarStore(50);
 
 function App() {
 	return (
 		<div>
-			<ProgressBar children={'asd'} />
+			<ProgressBar children={'asd'} store={progressBarStore} />
+			<MobxTimer />
+			<MobxComponent />
 		</div>
 	);
 }

@@ -3,8 +3,85 @@ import { observer } from 'mobx-react-lite';
 import { observable, makeObservable, computed, action } from 'mobx';
 import CSS from 'csstype';
 import { Debagger } from '../common/debbager';
+import { relative } from 'node:path/win32';
 
-// const console = new Debagger(false);
+interface IProgressBarProps {
+	children: string;
+	store: ProgressBarStore;
+}
+export const ProgressBar: FC<IProgressBarProps> = observer(({ children, store }) => {
+	return (
+		<>
+			<div>
+				{children}: {Math.floor(store.procents) + '%'}
+			</div>
+			<ProgressBarDiv store={store} />
+			<div style={{ display: 'flex' }}>
+				<ProgressBar2 store={store} />
+				<ProgressBar2 store={store} />
+				<ProgressBar2 store={store} />
+			</div>
+
+			<ProgressBarPlusMinus store={store} />
+		</>
+	);
+});
+
+export class StoreManyProgressBar {
+	public stores: ProgressBarStore[];
+	constructor() {
+		this.stores = [];
+		makeObservable(this, {
+			stores: observable,
+			procents: action,
+		});
+	}
+
+	public addStore(s: ProgressBarStore | ProgressBarStore[]): void {
+		if (Array.isArray(s)) {
+			for (const store of s) {
+				this.stores.push(store);
+			}
+		} else {
+			this.stores.push(s);
+		}
+	}
+
+	public createStore(n: number): void {
+		for (let i = 0; i < n; i++) {
+			this.stores.push(new ProgressBarStore(50));
+		}
+	}
+
+	public procents(): number {
+		let procents = 0;
+		for (const store of this.stores) {
+			procents += store.procents;
+		}
+		return procents / this.stores.length;
+	}
+}
+
+interface IProgressArrayProps {
+	store: StoreManyProgressBar;
+}
+export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) => {
+	const countingStores = 3;
+	if (store.stores.length === 0) {
+		store.createStore(countingStores);
+	}
+	console.log(store.procents());
+	console.log(store.stores[0].procents);
+
+	return (
+		<>
+			{store.stores.map((store, i) => (
+				<ProgressBar2 key={i} store={store}></ProgressBar2>
+			))}
+			<div>{store.procents()}</div>
+		</>
+	);
+});
 
 export class ProgressBarStore {
 	constructor(public procents: number) {
@@ -22,22 +99,6 @@ export class ProgressBarStore {
 
 	// }
 }
-
-interface IProgressBarProps {
-	children: string;
-	store: ProgressBarStore;
-}
-export const ProgressBar: FC<IProgressBarProps> = observer(({ children, store }) => {
-	return (
-		<>
-			<div>
-				{children}: {Math.floor(store.procents) + '%'}
-			</div>
-			<ProgressBarDiv store={store} />
-			<ProgressBarPlusMinus store={store} />
-		</>
-	);
-});
 
 interface IProgressBar_Div {
 	children?: any;
@@ -61,8 +122,6 @@ class Cursor {
  * 1. Если 100% - зеленый. 1-99 желтый, 0 красный
  *
  */
-
-// type voidFunc = (): void => ;
 
 export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgress, store }) => {
 	const [isDrag, setIsDrag] = useState<boolean>(false);
@@ -205,9 +264,10 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
 
 interface IProgressBarStore {
 	store: ProgressBarStore;
+	children?: React.ReactNode;
 }
 
-export const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) => {
+const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) => {
 	return (
 		<div>
 			<button
@@ -222,6 +282,103 @@ export const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) 
 				}}
 				children={'minus'}
 			/>
+		</div>
+	);
+});
+
+class RefDiv {
+	constructor(public div: React.RefObject<HTMLDivElement>) {}
+
+	changeWidth(width: number): void {
+		if (this.div.current) {
+			this.div.current.style.width = width + 'px';
+		}
+	}
+}
+
+const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children }) => {
+	const containerWidth = 300;
+	const leftPaddingWidth = 5;
+	const containerHeight = 40;
+
+	const styles: { [s: string]: CSS.Properties } = {
+		container: {
+			display: 'flex',
+			width: containerWidth + leftPaddingWidth + 'px',
+			height: containerHeight + 'px',
+			userSelect: 'none',
+			position: 'relative',
+		},
+		left: {
+			width: containerWidth / 2 + 'px',
+			background: 'green',
+			border: '2px solid rgb(161 204 255)',
+			borderRadius: '7px',
+		},
+		right: {
+			width: containerWidth / 2 + 'px',
+			background: 'yellow',
+			border: '2px solid rgb(161 204 255)',
+			borderRadius: '7px',
+		},
+		leftPadding: {
+			width: leftPaddingWidth + 'px',
+		},
+	};
+
+	const leftDiv = useRef<HTMLDivElement>(null);
+	const rightDiv = useRef<HTMLDivElement>(null);
+	const leftRefDiv = new RefDiv(leftDiv);
+	const rightRefDiv = new RefDiv(rightDiv);
+
+	const [clickState, setClickState] = useState(false);
+
+	const mouseHandler = (e: React.MouseEvent) => {
+		// console.log(e.type);
+		// console.log(e.nativeEvent.offsetX);
+
+		// console.log(e);
+		// console.log(e.currentTarget);
+		const pageOffsetX = e.currentTarget.getBoundingClientRect().left;
+		// console.log(pageOffsetX);
+		let x = e.clientX - leftPaddingWidth - pageOffsetX;
+
+		if (x <= 0) {
+			setClickState(false);
+		}
+		if (e.type === 'mousedown' || (e.type === 'mousemove' && clickState)) {
+			// console.log(e.clientX);
+
+			x = x > 300 ? 300 : x;
+			x = x < 0 ? 0 : x;
+
+			// console.log(`x: ${x}, e.clientX: ${e.clientX}`);
+
+			leftRefDiv.changeWidth(x);
+			rightRefDiv.changeWidth(300 - x);
+		}
+
+		if (e.type === 'mousedown') {
+			setClickState(true);
+		}
+
+		if (e.type === 'mouseleave' || e.type === 'mouseup') {
+			setClickState(false);
+		}
+	};
+
+	return (
+		<div
+			style={styles.container}
+			onMouseUp={mouseHandler}
+			onMouseDown={mouseHandler}
+			onMouseMove={mouseHandler}
+			onMouseLeave={mouseHandler}
+		>
+			<div style={styles.leftPadding}></div>
+			<div style={styles.left} ref={leftDiv}></div>
+			<div style={styles.right} ref={rightDiv}></div>
+			{children}
 		</div>
 	);
 });

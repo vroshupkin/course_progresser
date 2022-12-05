@@ -17,26 +17,25 @@ export const ProgressBar: FC<IProgressBarProps> = observer(({ children, store })
 			</div>
 			<ProgressBarDiv store={store} />
 			<div style={{ display: 'flex' }}>
-				<ProgressBar2 store={store} />
-				<ProgressBar2 store={store} />
-				<ProgressBar2 store={store} />
+				<ProgressBar2 store={store} containerWidth={100} />
+				<ProgressBar2 store={store} containerWidth={100} />
+				<ProgressBar2 store={store} containerWidth={100} />
 			</div>
 
-			<ProgressBarPlusMinus store={store} />
+			{/* <ProgressBarPlusMinus store={store} /> */}
 		</>
 	);
 });
 
 export class StoreManyProgressBar {
-	public stores: ProgressBarStore[];
+	@observable public stores: ProgressBarStore[];
+
 	constructor() {
 		this.stores = [];
-		makeObservable(this, {
-			stores: observable,
-			procents: action,
-		});
+		makeObservable(this);
 	}
 
+	@action
 	public addStore(s: ProgressBarStore | ProgressBarStore[]): void {
 		if (Array.isArray(s)) {
 			for (const store of s) {
@@ -53,12 +52,14 @@ export class StoreManyProgressBar {
 		}
 	}
 
-	public procents(): number {
+	@computed
+	public get procents(): number {
 		let procents = 0;
 		for (const store of this.stores) {
 			procents += store.procents;
 		}
-		return procents / this.stores.length;
+
+		return Math.floor(procents / this.stores.length);
 	}
 }
 
@@ -70,27 +71,33 @@ export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) => {
 	if (store.stores.length === 0) {
 		store.createStore(countingStores);
 	}
-	console.log(store.procents());
-	console.log(store.stores[0].procents);
 
+	const styles: { [s: string]: CSS.Properties } = {
+		container: {
+			display: 'flex',
+		},
+	};
 	return (
-		<>
-			{store.stores.map((store, i) => (
-				<ProgressBar2 key={i} store={store}></ProgressBar2>
+		<div style={styles.container}>
+			{store.stores.map((s, i) => (
+				<ProgressBar2 key={i} store={s} containerWidth={120}></ProgressBar2>
 			))}
-			<div>{store.procents()}</div>
-		</>
+			<div>{store.procents}</div>
+		</div>
 	);
 });
 
 export class ProgressBarStore {
-	constructor(public procents: number) {
-		makeObservable(this, {
-			procents: observable,
-			changeProcents: action,
-		});
+	@observable
+	public procents: number;
+
+	constructor(procents: number) {
+		this.procents = procents;
+
+		makeObservable(this);
 	}
 
+	@action
 	changeProcents(procents: number): void {
 		this.procents = procents;
 	}
@@ -265,6 +272,7 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
 interface IProgressBarStore {
 	store: ProgressBarStore;
 	children?: React.ReactNode;
+	containerWidth: number;
 }
 
 const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) => {
@@ -296,10 +304,10 @@ class RefDiv {
 	}
 }
 
-const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children }) => {
-	const containerWidth = 300;
+const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, containerWidth }) => {
+	// const containerWidth = 300;
 	const leftPaddingWidth = 5;
-	const containerHeight = 40;
+	const containerHeight = 20;
 
 	const styles: { [s: string]: CSS.Properties } = {
 		container: {
@@ -333,6 +341,13 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children }) => {
 
 	const [clickState, setClickState] = useState(false);
 
+	const setProcentsInStore = (xPosition: number): void => {
+		let procents = (100 * xPosition) / containerWidth;
+		procents = procents > 99 ? 100 : Math.floor(procents);
+
+		store.changeProcents(procents);
+	};
+
 	const mouseHandler = (e: React.MouseEvent) => {
 		// console.log(e.type);
 		// console.log(e.nativeEvent.offsetX);
@@ -349,13 +364,17 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children }) => {
 		if (e.type === 'mousedown' || (e.type === 'mousemove' && clickState)) {
 			// console.log(e.clientX);
 
-			x = x > 300 ? 300 : x;
+			x = x > containerWidth ? containerWidth : x;
 			x = x < 0 ? 0 : x;
 
 			// console.log(`x: ${x}, e.clientX: ${e.clientX}`);
 
 			leftRefDiv.changeWidth(x);
-			rightRefDiv.changeWidth(300 - x);
+			rightRefDiv.changeWidth(containerWidth - x);
+
+			console.log(x);
+
+			setProcentsInStore(x);
 		}
 
 		if (e.type === 'mousedown') {

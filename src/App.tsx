@@ -8,7 +8,7 @@ import {
 } from './components/ProgressBars';
 import { StepCard, VideoCard } from './components/StepCard';
 import { ProcentStore } from './components/stores/ProcentStore';
-import { step_10 } from './data/purpleSchoolNodeJS';
+import { course_10_name, step_10 } from './data/purpleSchoolNodeJS';
 import CSS from 'csstype';
 
 const progressBarStore = new ProgressBarStore(50);
@@ -24,7 +24,10 @@ function App() {
 				<ProgressArray store={progressArrayStore}></ProgressArray>
 			</div>
 
-			<StepCard></StepCard>
+			<StepCard
+				stepName={course_10_name[0] + '. ' + course_10_name[1]}
+				stepCourseObject={step_10}
+			></StepCard>
 		</>
 	);
 }

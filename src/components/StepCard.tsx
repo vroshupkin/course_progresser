@@ -7,7 +7,7 @@ import { Div } from '../common/htmlRef';
 import { viewNumber } from '../common/number';
 import { Dictionary } from '../common/dictionary.interface.';
 import { Procent } from '../common/procent';
-import { step_10 } from '../data/purpleSchoolNodeJS';
+import { step_10, TCourseVideosTuple } from '../data/purpleSchoolNodeJS';
 
 class StepCardStore {
 	constructor() {
@@ -16,11 +16,21 @@ class StepCardStore {
 }
 
 interface IStepCard {
-	store: ProcentStore;
-	name: string;
+	stepName: string;
+	stepCourseObject: TCourseVideosTuple[];
 }
 
-export function StepCard() {
+const StepCardName: FC<{ name: string }> = ({ name }) => {
+	const styles: Dictionary<CSS.Properties> = {
+		div: {
+			fontSize: '30px',
+			marginBottom: '15px',
+		},
+	};
+	return <div style={styles.div}>{name}</div>;
+};
+
+export const StepCard: FC<IStepCard> = ({ stepName, stepCourseObject }) => {
 	const styles: Dictionary<CSS.Properties> = {
 		stepCard: {
 			display: 'flex',
@@ -30,14 +40,16 @@ export function StepCard() {
 		},
 		container: {
 			display: 'flex',
-			justifyContent: 'center',
+			flexDirection: 'column',
+			alignItems: 'center',
 		},
 	};
 
 	return (
 		<div style={styles.container}>
+			<StepCardName name={stepName}></StepCardName>
 			<div style={styles.stepCard}>
-				{step_10.map((arr, ind) => {
+				{stepCourseObject.map((arr, ind) => {
 					const max = arr[2];
 					const name = arr[0] + ' ' + arr[1];
 
@@ -48,7 +60,7 @@ export function StepCard() {
 			</div>
 		</div>
 	);
-}
+};
 
 const VideoCardName: FC<{ name: string }> = ({ name }) => {
 	const style: CSS.Properties = {
@@ -60,7 +72,11 @@ const VideoCardName: FC<{ name: string }> = ({ name }) => {
 	return <div style={style}>{name}</div>;
 };
 
-export const VideoCard: FC<IStepCard> = observer(({ store, name }) => {
+interface IVideoCard {
+	store: ProcentStore;
+	name: string;
+}
+export const VideoCard: FC<IVideoCard> = observer(({ store, name }) => {
 	const otherBorderStyle = 'solid 3px #9e9e9e';
 
 	const styles: Dictionary<CSS.Properties> = {

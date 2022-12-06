@@ -1,7 +1,7 @@
-type TCourseVideosTuple = [number, string, number];
-type TCourseNameTuple = [number, string];
+export type TCourseVideosTuple = [number, string, number];
+export type TCourseNameTuple = [number, string];
 
-export const step_10_name: TCourseNameTuple = [10, 'Переход на TypeScript'];
+export const course_10_name: TCourseNameTuple = [10, 'Переход на TypeScript'];
 export const step_10: TCourseVideosTuple[] = [
 	[1, 'Дополнительный курс по TypeScript', 1.31],
 	[2, 'Почему TypeScript', 5.51],

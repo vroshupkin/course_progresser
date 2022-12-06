@@ -66,21 +66,42 @@ export class StoreManyProgressBar {
 interface IProgressArrayProps {
 	store: StoreManyProgressBar;
 }
+
+import { step_10 as purpleSchoolStep } from '../data/purpleSchoolNodeJS';
+import { Div } from '../common/htmlRef';
+
 export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) => {
 	const countingStores = 3;
 	if (store.stores.length === 0) {
 		store.createStore(countingStores);
 	}
 
+	// console.log(purpleSchoolStep);
+
 	const styles: { [s: string]: CSS.Properties } = {
 		container: {
 			display: 'flex',
+			flexDirection: 'column',
+		},
+		innerContainer: {
+			display: 'flex',
 		},
 	};
+
+	const viewNumberProcents = (procent: number): string => {
+		const addSpace = 3 - `${procent}`.length;
+		// console.log(' '.repeat(addSpace) + procent);
+
+		return procent + '\xA0'.repeat(addSpace);
+	};
+
 	return (
 		<div style={styles.container}>
 			{store.stores.map((s, i) => (
-				<ProgressBar2 key={i} store={s} containerWidth={120}></ProgressBar2>
+				<div style={styles.innerContainer}>
+					<div style={{ width: '200px' }}>{purpleSchoolStep[i][2]}</div>
+					<ProgressBar2 key={i} store={s} containerWidth={120}></ProgressBar2>
+				</div>
 			))}
 			<div>{store.procents}</div>
 		</div>
@@ -294,16 +315,6 @@ const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) => {
 	);
 });
 
-class RefDiv {
-	constructor(public div: React.RefObject<HTMLDivElement>) {}
-
-	changeWidth(width: number): void {
-		if (this.div.current) {
-			this.div.current.style.width = width + 'px';
-		}
-	}
-}
-
 const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, containerWidth }) => {
 	// const containerWidth = 300;
 	const leftPaddingWidth = 5;
@@ -322,12 +333,14 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, contain
 			background: 'green',
 			border: '2px solid rgb(161 204 255)',
 			borderRadius: '7px',
+			userSelect: 'none',
 		},
 		right: {
 			width: containerWidth / 2 + 'px',
 			background: 'yellow',
 			border: '2px solid rgb(161 204 255)',
 			borderRadius: '7px',
+			userSelect: 'none',
 		},
 		leftPadding: {
 			width: leftPaddingWidth + 'px',
@@ -336,8 +349,8 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, contain
 
 	const leftDiv = useRef<HTMLDivElement>(null);
 	const rightDiv = useRef<HTMLDivElement>(null);
-	const leftRefDiv = new RefDiv(leftDiv);
-	const rightRefDiv = new RefDiv(rightDiv);
+	const leftRefDiv = new Div(leftDiv);
+	const rightRefDiv = new Div(rightDiv);
 
 	const [clickState, setClickState] = useState(false);
 
@@ -372,7 +385,7 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, contain
 			leftRefDiv.changeWidth(x);
 			rightRefDiv.changeWidth(containerWidth - x);
 
-			console.log(x);
+			// console.log(x);
 
 			setProcentsInStore(x);
 		}

@@ -1,4 +1,4 @@
-import { sliceColumn, Vector } from '../matrix';
+import { createIdentityMatrix, sliceColumn, Vector } from '../matrix';
 
 describe('sliceColumn()', () => {
 	const arr_0 = [
@@ -29,5 +29,17 @@ describe('Vector.dotProduct()', () => {
 
 	test('[1, 2, 3].dotProduct([2, -2, 0]) ', () => {
 		expect(v2).toStrictEqual(-2);
+	});
+});
+
+describe('createIdentity matrix', () => {
+	createIdentityMatrix(3);
+
+	test('Identity matrix size = 3', () => {
+		expect(createIdentityMatrix(3).data).toStrictEqual([
+			[1, 0, 0],
+			[0, 1, 0],
+			[0, 0, 1],
+		]);
 	});
 });

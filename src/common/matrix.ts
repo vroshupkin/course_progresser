@@ -17,7 +17,7 @@ export function createIdentityMatrix(size: number): Matrix {
 		matrix[i] = [];
 
 		for (let j = 0; j < size; j++) {
-			matrix[i][j] = 0;
+			matrix[i][j] = i == j ? 1 : 0;
 		}
 	}
 

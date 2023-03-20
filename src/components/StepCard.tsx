@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FC, useRef, useState } from 'react';
-import { ProcentStore } from './stores/ProcentStore';
+import { ProcentStore } from './stores/ProcentStore.store';
 import CSS from 'csstype';
 import { Div } from '../common/htmlRef';
 import { viewNumber } from '../common/number';
@@ -98,7 +98,7 @@ export const VideoCard: FC<IVideoCard> = observer(({ store, name }) => {
 			<div style={{ display: 'flex', justifyContent: 'center' }}>
 				<ProgressText store={store} />
 			</div>
-			<ProgressBar2 store={store} />
+			<ProgressBar store={store} />
 		</div>
 	);
 });
@@ -126,10 +126,8 @@ export const ProgressText: FC<IProgressText> = observer(({ store }) => {
 		},
 	};
 
-	const inputOnChange = (e: React.FormEvent<HTMLInputElement>) => {
-		// console.log(e.currentTarget.value);
+	const inputOnChange = (e: React.FormEvent<HTMLInputElement>): void => {
 		store.setValue(Number(e.currentTarget.value));
-		// store.setValue(e);
 	};
 
 	return (
@@ -145,8 +143,7 @@ interface IProgressBarStore {
 	containerWidth?: number;
 }
 
-const ProgressBar2: FC<IProgressBarStore> = observer(({ store, containerWidth = 200 }) => {
-	// const containerWidth = 300;
+const ProgressBar: FC<IProgressBarStore> = observer(({ store, containerWidth = 200 }) => {
 	const leftPaddingWidth = 5;
 	const containerHeight = 20;
 
@@ -203,9 +200,6 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, containerWidth = 
 		if (e.type === 'mousedown' || (e.type === 'mousemove' && clickState)) {
 			x = x > containerWidth ? containerWidth : x;
 			x = x < 0 ? 0 : x;
-
-			// leftRefDiv.changeWidth(x);
-			// rightRefDiv.changeWidth(containerWidth - x);
 
 			setProcentsInStore(x);
 		}

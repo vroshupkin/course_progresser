@@ -4,64 +4,27 @@ import { observable, makeObservable, computed, action } from 'mobx';
 import CSS from 'csstype';
 import { Debagger } from '../common/debbager';
 import { relative } from 'node:path/win32';
+import { ProgressBarStore, StoreManyProgressBar } from './stores/ProgressBar.store';
 
 interface IProgressBarProps {
 	children: string;
 	store: ProgressBarStore;
 }
-export const ProgressBar: FC<IProgressBarProps> = observer(({ children, store }) => {
-	return (
-		<>
-			<div>
-				{children}: {Math.floor(store.procents) + '%'}
-			</div>
-			<ProgressBarDiv store={store} />
-			<div style={{ display: 'flex' }}>
-				<ProgressBar2 store={store} containerWidth={100} />
-				<ProgressBar2 store={store} containerWidth={100} />
-				<ProgressBar2 store={store} containerWidth={100} />
-			</div>
-
-			{/* <ProgressBarPlusMinus store={store} /> */}
-		</>
-	);
-});
-
-export class StoreManyProgressBar {
-	@observable public stores: ProgressBarStore[];
-
-	constructor() {
-		this.stores = [];
-		makeObservable(this);
-	}
-
-	@action
-	public addStore(s: ProgressBarStore | ProgressBarStore[]): void {
-		if (Array.isArray(s)) {
-			for (const store of s) {
-				this.stores.push(store);
-			}
-		} else {
-			this.stores.push(s);
-		}
-	}
-
-	public createStore(n: number): void {
-		for (let i = 0; i < n; i++) {
-			this.stores.push(new ProgressBarStore(50));
-		}
-	}
-
-	@computed
-	public get procents(): number {
-		let procents = 0;
-		for (const store of this.stores) {
-			procents += store.procents;
-		}
-
-		return Math.floor(procents / this.stores.length);
-	}
-}
+// export const ProgressBar: FC<IProgressBarProps> = observer(({ children, store }) => {
+// 	return (
+// 		<>
+// 			<div>
+// 				{children}: {Math.floor(store.procents) + '%'}
+// 			</div>
+// 			<ProgressBarDiv store={store} />
+// 			<div style={{ display: 'flex' }}>
+// 				<ProgressBar2 store={store} containerWidth={100} />
+// 				<ProgressBar2 store={store} containerWidth={100} />
+// 				<ProgressBar2 store={store} containerWidth={100} />
+// 			</div>
+// 		</>
+// 	);
+// });
 
 interface IProgressArrayProps {
 	store: StoreManyProgressBar;
@@ -72,11 +35,6 @@ import { Div } from '../common/htmlRef';
 
 export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) => {
 	const countingStores = 3;
-	if (store.stores.length === 0) {
-		store.createStore(countingStores);
-	}
-
-	// console.log(purpleSchoolStep);
 
 	const styles: { [s: string]: CSS.Properties } = {
 		container: {
@@ -108,26 +66,6 @@ export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) => {
 	);
 });
 
-export class ProgressBarStore {
-	@observable
-	public procents: number;
-
-	constructor(procents: number) {
-		this.procents = procents;
-
-		makeObservable(this);
-	}
-
-	@action
-	changeProcents(procents: number): void {
-		this.procents = procents;
-	}
-
-	// get value(val: number){
-
-	// }
-}
-
 interface IProgressBar_Div {
 	children?: any;
 	completeProgress?: number;
@@ -137,7 +75,7 @@ interface IProgressBar_Div {
 class Cursor {
 	constructor(private x: number) {}
 
-	update_x(num: number) {
+	update_x(num: number): void {
 		this.x = num;
 		console.log('cursor update', this.x);
 	}
@@ -154,21 +92,10 @@ class Cursor {
 export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgress, store }) => {
 	const [isDrag, setIsDrag] = useState<boolean>(false);
 
-	const cursor = new Cursor(0);
+	// const cursor = new Cursor(0);
 
 	const totalWidth = 300;
 	const cursorSize = 14; // размер курсора в px
-
-	// const [percent, setPercent] = useState(50);
-
-	// useEffect(() => {}, [percent]);
-	// let completeWidth = 150;
-	// let divWidths.rest = 150;
-
-	// const divWidths = {
-	// 	complete: 150,
-	// 	rest: 150,
-	// };
 
 	const completeDivRef = useRef<HTMLDivElement>(null);
 	const restDivRef = useRef<HTMLDivElement>(null);
@@ -186,7 +113,6 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
 		}
 	};
 
-	//
 	const calcPercent = (leftOffset: number): number => {
 		leftOffset -= cursorSize / 2;
 		return Math.floor(100 * leftOffset) / totalWidth;
@@ -197,18 +123,6 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
 	changeDivWidth(completeDivRef, completeWidth);
 	changeDivWidth(restDivRef, restWidth);
 	changeCursorPosition(indexDivRef, completeWidth);
-
-	// useEffect(() => {
-	// 	const completeWidth = (totalWidth * percent) / 100;
-	// 	const restWidth = totalWidth - completeWidth;
-	// 	// console.log(percent + '%');
-	// 	// console.log(completeWidth);
-
-	// 	// console.log(completeDivRef.current?.style.width);
-	// 	// console.log(restDivRef.current?.style.width);
-	// 	cursor.update_x(percent);
-
-	// }, [percent]);
 
 	const styles: { [s: string]: CSS.Properties } = {
 		container: {
@@ -240,17 +154,9 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
 		if (e.type === 'mouseleave' || e.type === 'mouseup' || e.type === 'mousedown') {
 			setIsDrag(false);
 		} else if (e.type === 'mousemove' && isDrag) {
-			// console.log(e.movementX);
-			// console.log(e.clientX);
-
-			console.log(e.clientX);
 			if (e.clientX <= 300 + cursorSize / 2 && e.clientX >= -cursorSize / 2) {
-				// setPercent();
-
 				store.changeProcents(calcPercent(e.clientX));
 			}
-
-			// console.log('hello');
 		}
 
 		return;
@@ -267,11 +173,11 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
 				<div
 					style={styles.cursor}
 					ref={indexDivRef}
-					onMouseDown={(e) => {
+					onMouseDown={(e): void => {
 						setIsDrag(true);
 						// console.log(e.type);
 					}}
-					onMouseUp={(e) => {
+					onMouseUp={(e): void => {
 						setIsDrag(false);
 						// console.log(e.type);
 					}}
@@ -300,13 +206,13 @@ const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) => {
 	return (
 		<div>
 			<button
-				onClick={(e) => {
+				onClick={(e): void => {
 					store.changeProcents(store.procents + 1);
 				}}
 				children={'plus'}
 			/>
 			<button
-				onClick={(e) => {
+				onClick={(e): void => {
 					store.changeProcents(store.procents - 1);
 				}}
 				children={'minus'}
@@ -316,7 +222,6 @@ const ProgressBarPlusMinus: FC<IProgressBarStore> = observer(({ store }) => {
 });
 
 const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, containerWidth }) => {
-	// const containerWidth = 300;
 	const leftPaddingWidth = 5;
 	const containerHeight = 20;
 
@@ -361,31 +266,19 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, contain
 		store.changeProcents(procents);
 	};
 
-	const mouseHandler = (e: React.MouseEvent) => {
-		// console.log(e.type);
-		// console.log(e.nativeEvent.offsetX);
-
-		// console.log(e);
-		// console.log(e.currentTarget);
+	const mouseHandler = (e: React.MouseEvent): void => {
 		const pageOffsetX = e.currentTarget.getBoundingClientRect().left;
-		// console.log(pageOffsetX);
 		let x = e.clientX - leftPaddingWidth - pageOffsetX;
 
 		if (x <= 0) {
 			setClickState(false);
 		}
 		if (e.type === 'mousedown' || (e.type === 'mousemove' && clickState)) {
-			// console.log(e.clientX);
-
 			x = x > containerWidth ? containerWidth : x;
 			x = x < 0 ? 0 : x;
 
-			// console.log(`x: ${x}, e.clientX: ${e.clientX}`);
-
 			leftRefDiv.changeWidth(x);
 			rightRefDiv.changeWidth(containerWidth - x);
-
-			// console.log(x);
 
 			setProcentsInStore(x);
 		}

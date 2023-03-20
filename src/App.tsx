@@ -1,35 +1,35 @@
 import { Dictionary } from './common/dictionary.interface.';
 import { MobxComponent, MobxTimer } from './components/MobxTimer';
-import {
-	ProgressArray,
-	ProgressBar,
-	ProgressBarStore,
-	StoreManyProgressBar,
-} from './components/ProgressBars';
+import { ProgressArray } from './components/ProgressBars';
+
+import { ProgressBarStore, StoreManyProgressBar } from './components/stores/ProgressBar.store';
+
 import { StepCard, VideoCard } from './components/StepCard';
-import { ProcentStore } from './components/stores/ProcentStore';
+import { ProcentStore } from './components/stores/ProcentStore.store';
 import { course_10_name, step_10 } from './data/purpleSchoolNodeJS';
 import CSS from 'csstype';
+import { IncomeBar, IncomeBarControl, IncomeBars } from './components/IncomeBar';
+import { IncomeBarStore, IncomeBarStores } from './components/stores/IncomeBar.store';
 
-const progressBarStore = new ProgressBarStore(50);
-const progressArrayStore = new StoreManyProgressBar();
+const income_bar_store = new IncomeBarStore(100, 80);
 
-const procentStore = new ProcentStore(0, 0, 18.18);
+const income_bar_stores: IncomeBarStores = new IncomeBarStores(
+	[new IncomeBarStore(100, 80, 0), new IncomeBarStore(30, 50, 1), new IncomeBarStore(18, 55, 2)],
+	0,
+);
 
-function App() {
+for (const store of income_bar_stores.stores) {
+	store.stores = income_bar_stores;
+	// console.log(store.stores);
+}
+
+export default function App(): JSX.Element {
 	return (
 		<>
 			<div>
-				<MobxComponent />
-				<ProgressArray store={progressArrayStore}></ProgressArray>
+				<IncomeBars stores={income_bar_stores}></IncomeBars>
+				<IncomeBarControl stores={income_bar_stores}></IncomeBarControl>
 			</div>
-
-			<StepCard
-				stepName={course_10_name[0] + '. ' + course_10_name[1]}
-				stepCourseObject={step_10}
-			></StepCard>
 		</>
 	);
 }
-
-export default App;

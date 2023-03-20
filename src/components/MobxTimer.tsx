@@ -98,11 +98,11 @@ class Doubler {
 		this.value = value;
 	}
 
-	get double() {
+	get double(): number {
 		return this.value * 2;
 	}
 
-	increment() {
+	increment(): void {
 		this.value++;
 	}
 

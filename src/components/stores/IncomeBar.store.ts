@@ -48,11 +48,11 @@ export class IncomeBarStore {
 
 export class IncomeBarStores {
 	@observable public stores: IncomeBarStore[];
-	@observable public order: number;
+	@observable public order_select: number;
 
 	constructor(stores: IncomeBarStore[], order: number) {
 		this.stores = stores;
-		this.order = order;
+		this.order_select = order;
 
 		makeObservable(this);
 	}

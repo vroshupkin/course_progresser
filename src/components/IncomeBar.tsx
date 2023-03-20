@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import CSS from 'csstype';
-import { createRef, FC, useRef } from 'react';
+import { createRef, CSSProperties, FC, useRef } from 'react';
 import { IncomeBarStore, IncomeBarStores } from './stores/IncomeBar.store';
 
 interface IncomeBarProps {
@@ -10,71 +10,72 @@ interface IncomeBarProps {
 export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 	const { revenue, costs } = { ...store };
 
-	const container_style: CSS.Properties = {
-		position: 'relative',
-		height: '200px',
-		width: '20px',
+	const styles: { [s: string]: CSSProperties } = {
+		container: {
+			position: 'relative',
+			height: '200px',
+			width: '20px',
+		},
+		profit: {
+			position: 'absolute',
+			bottom: '50%',
+
+			height: `${revenue - costs}px`,
+			right: '5px',
+
+			width: '15px',
+			backgroundColor: 'green',
+
+			border: 'solid 1px',
+			boxSizing: 'border-box',
+		},
+		revenue: {
+			position: 'absolute',
+			bottom: '50%',
+			height: `${revenue}px`,
+
+			backgroundColor: 'yellow',
+			width: '20px',
+
+			borderColor: 'rgb(188, 255, 37)',
+			border: 'solid 1px',
+
+			boxSizing: 'border-box',
+		},
+
+		total_cost: {
+			position: 'absolute',
+			top: '50%',
+			height: `${costs}px`,
+
+			backgroundColor: 'red',
+			width: '20px',
+
+			border: 'solid 1px',
+
+			boxSizing: 'border-box',
+		},
 	};
 
-	// const isPositiveProfit = revenue_value > cost_values;
-
-	// Прибыль
-	const profit_style: CSS.Properties = {
-		position: 'absolute',
-		bottom: '50%',
-
-		height: `${revenue - costs}px`,
-		right: '5px',
-
-		width: '15px',
-		backgroundColor: 'green',
-
-		border: 'solid 1px',
-		boxSizing: 'border-box',
+	const selectStyle: CSSProperties = {
+		border: 'solid 3px green',
+		padding: '0px 5px',
 	};
-
-	// Доход
-	const revenue_style: CSS.Properties = {
-		position: 'absolute',
-		bottom: '50%',
-		height: `${revenue}px`,
-
-		backgroundColor: 'yellow',
-		width: '20px',
-
-		borderColor: 'rgb(188, 255, 37)',
-		border: 'solid 1px',
-
-		boxSizing: 'border-box',
-	};
-
-	// Расход
-	const total_cost_style: CSS.Properties = {
-		position: 'absolute',
-		top: '50%',
-		height: `${costs}px`,
-
-		backgroundColor: 'red',
-		width: '20px',
-
-		border: 'solid 1px',
-
-		boxSizing: 'border-box',
-	};
-
+	if (store.order == store.stores?.order_select) {
+		styles.container = { ...styles.container, ...selectStyle };
+	}
 	const hanlders: { [s: string]: () => void } = {
 		updateOrder: () => {
 			if (store.stores != null) {
-				store.stores.order = store.order;
-				console.log('asd');
+				store.stores.order_select = store.order;
 			}
 		},
 	};
 	return (
-		<div style={container_style} onClick={hanlders.updateOrder}>
-			<div style={revenue_style}></div>
-			<div style={total_cost_style}></div>
-			<div style={profit_style}></div>
+		<div style={styles.container} onClick={hanlders.updateOrder}>
+			<div style={styles.revenue}></div>
+			<div style={styles.total_cost}></div>
+			<div style={styles.profit}></div>
 		</div>
 	);
 });
@@ -85,11 +86,11 @@ interface IncomeBarControlProps {
 
 // TODO Написать на гридах
 export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: stores }) => {
-	const current_store = stores.stores[stores.order];
+	const current_store = stores.stores[stores.order_select];
 	const { revenue, costs } = { ...current_store };
 
 	const styles: { [s: string]: CSS.Properties } = {
-		container_style: {
+		container: {
 			width: '300px',
 			height: '200px',
 			// display: 'flex',
@@ -97,7 +98,7 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 		},
 		item: {
 			display: 'flex',
-			justifyContent: 'space-between',
+			// justifyContent: 'space-between',
 		},
 	};
 
@@ -141,7 +142,7 @@ interface IncomeBarControlsProps {
 }
 
 export const IncomeBars: FC<IncomeBarControlsProps> = observer(({ stores }) => {
-	const order = stores.order;
+	const order = stores.order_select;
 
 	// const hanlders: { [s: string]: () => void } = {}
 

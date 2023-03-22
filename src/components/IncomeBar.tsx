@@ -77,7 +77,17 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 		store.order == store.stores?.order_select ? selectStyle : {},
 	];
 
+	const profitStyle: CSSProperties = {
+		height: `${Math.abs(revenue - costs)}px`,
+	};
+	if (revenue > costs) {
+		profitStyle['bottom'] = `50%`;
+	} else {
+		profitStyle['top'] = `50%`;
+	}
+
 	styles.container = mergeObjects(styles.container, ...mixinContainer);
+	styles.profit = mergeObjects(styles['profit'], profitStyle);
 
 	const hanlders: { [s: string]: (e?: any) => void } = {
 		updateOrder: () => {

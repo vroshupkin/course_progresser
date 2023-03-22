@@ -1,29 +1,34 @@
 import { observer } from 'mobx-react-lite';
 import CSS from 'csstype';
-import { createRef, CSSProperties, FC, useRef } from 'react';
+import { createRef, CSSProperties, FC, SyntheticEvent, useRef, useState } from 'react';
 import { IncomeBarStore, IncomeBarStores } from './stores/IncomeBar.store';
+import { mergeObjects, TObject } from '../common/merge_json';
+import { IStyleDictionary } from '../common/layout_tools';
 
 interface IncomeBarProps {
 	store: IncomeBarStore;
 }
 
 export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
+	const [isHover, setIsHover] = useState(false);
+
 	const { revenue, costs } = { ...store };
 
-	const styles: { [s: string]: CSSProperties } = {
+	const styles: IStyleDictionary = {
 		container: {
 			position: 'relative',
-			height: '200px',
-			width: '20px',
+			height: '220px',
+			width: '40px',
+			boxSizing: 'border-box',
 		},
 		profit: {
 			position: 'absolute',
 			bottom: '50%',
-
+			margin: '0 4px',
 			height: `${revenue - costs}px`,
-			right: '5px',
 
-			width: '15px',
+			width: '12px',
+
 			backgroundColor: 'green',
 
 			border: 'solid 1px',
@@ -61,18 +66,43 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 		border: 'solid 3px green',
 		padding: '0px 5px',
 	};
-	if (store.order == store.stores?.order_select) {
-		styles.container = { ...styles.container, ...selectStyle };
-	}
-	const hanlders: { [s: string]: () => void } = {
+
+	const onHoverStyle: CSSProperties = {
+		border: 'solid 3px #ac9600',
+		padding: '0px 5px',
+	};
+
+	const mixinContainer: CSSProperties[] = [
+		isHover == true ? onHoverStyle : {},
+		store.order == store.stores?.order_select ? selectStyle : {},
+	];
+
+	styles.container = mergeObjects(styles.container, ...mixinContainer);
+
+	const hanlders: { [s: string]: (e?: any) => void } = {
 		updateOrder: () => {
 			if (store.stores != null) {
 				store.stores.order_select = store.order;
 			}
 		},
+
+		mouseOver: (e: React.MouseEventHandler<HTMLDivElement>) => {
+			console.log(isHover);
+
+			setIsHover(true);
+		},
+		mouseOut: (e: React.MouseEventHandler<HTMLDivElement>) => {
+			console.log(isHover);
+			setIsHover(false);
+		},
 	};
 	return (
-		<div style={styles.container} onClick={hanlders.updateOrder}>
+		<div
+			style={styles.container}
+			onClick={hanlders.updateOrder}
+			onMouseOver={hanlders.mouseOver}
+			onMouseOut={hanlders.mouseOut}
+		>
 			<div style={styles.revenue}></div>
 			<div style={styles.total_cost}></div>
 			<div style={styles.profit}></div>
@@ -89,16 +119,13 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 	const current_store = stores.stores[stores.order_select];
 	const { revenue, costs } = { ...current_store };
 
-	const styles: { [s: string]: CSS.Properties } = {
+	const styles: IStyleDictionary = {
 		container: {
 			width: '300px',
 			height: '200px',
-			// display: 'flex',
-			// justifyContent: 'space-between',
 		},
 		item: {
 			display: 'flex',
-			// justifyContent: 'space-between',
 		},
 	};
 
@@ -144,10 +171,14 @@ interface IncomeBarControlsProps {
 export const IncomeBars: FC<IncomeBarControlsProps> = observer(({ stores }) => {
 	const order = stores.order_select;
 
-	// const hanlders: { [s: string]: () => void } = {}
+	const styles: IStyleDictionary = {
+		container: {
+			display: 'flex',
+		},
+	};
 
 	return (
-		<div style={{ display: 'flex', gap: '10px' }}>
+		<div style={styles.container}>
 			{stores.stores.map((s) => (
 				<IncomeBar store={s}></IncomeBar>
 			))}

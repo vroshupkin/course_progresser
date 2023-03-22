@@ -29,8 +29,6 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 
 			width: '12px',
 
-			backgroundColor: 'green',
-
 			border: 'solid 1px',
 			boxSizing: 'border-box',
 		},
@@ -48,12 +46,12 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 			boxSizing: 'border-box',
 		},
 
-		total_cost: {
+		cost: {
 			position: 'absolute',
 			top: '50%',
 			height: `${costs}px`,
 
-			backgroundColor: 'red',
+			backgroundColor: '#ff4a4a',
 			width: '20px',
 
 			border: 'solid 1px',
@@ -82,13 +80,14 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 	};
 	if (revenue > costs) {
 		profitStyle['bottom'] = `50%`;
+		profitStyle['backgroundColor'] = '#8aff8a';
 	} else {
 		profitStyle['top'] = `50%`;
+		profitStyle['backgroundColor'] = '#ff9aa2';
 	}
 
 	styles.container = mergeObjects(styles.container, ...mixinContainer);
 	styles.profit = mergeObjects(styles['profit'], profitStyle);
-
 	const hanlders: { [s: string]: (e?: any) => void } = {
 		updateOrder: () => {
 			if (store.stores != null) {
@@ -114,7 +113,7 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => {
 			onMouseOut={hanlders.mouseOut}
 		>
 			<div style={styles.revenue}></div>
-			<div style={styles.total_cost}></div>
+			<div style={styles.cost}></div>
 			<div style={styles.profit}></div>
 		</div>
 	);
@@ -169,6 +168,10 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 
 			<div style={styles.item}>
 				<div>Прибыль: {revenue - costs} руб.</div>
+			</div>
+
+			<div style={styles.item}>
+				<div>Суммарна прибыль: {stores.sum} руб.</div>
 			</div>
 		</div>
 	);

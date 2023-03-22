@@ -1,4 +1,4 @@
-import { makeObservable, observable } from 'mobx';
+import { computed, makeObservable, observable } from 'mobx';
 
 export class IncomeBarStore {
 	@observable public revenue: number;
@@ -55,5 +55,9 @@ export class IncomeBarStores {
 		this.order_select = order;
 
 		makeObservable(this);
+	}
+
+	@computed public get sum(): number {
+		return this.stores.reduce((prev, curr): number => prev + curr.revenue - curr.costs, 0);
 	}
 }

@@ -163,6 +163,14 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 				width: '100%',
 			},
 		},
+		summaryRow: {
+			display: 'grid',
+			gridTemplateColumns: '1fr 1fr',
+			textAlign: 'center',
+			'& div': {
+				border: '1px solid #aaa',
+			},
+		},
 	})();
 
 	const refs: { [s: string]: React.RefObject<HTMLInputElement> } = {
@@ -172,8 +180,7 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 	};
 
 	useEffect(() => {
-		console.log(refs.row.current?.style);
-		console.log(classes.row);
+		return;
 	});
 
 	const applies: { [s: string]: () => void } = {
@@ -187,24 +194,26 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 
 	return (
 		<div style={styles.container}>
-			<div ref={refs.row} className={classes.row} style={styles.item}>
+			<div className={classes.row}>
 				<div>Доход: {revenue} руб.</div>
 				<input ref={refs.revenue}></input>
 				<button onClick={applies.revenue}>apply</button>
 			</div>
 
-			<div className={classes.row} style={styles.item}>
+			<div className={classes.row}>
 				<div>Расход: {costs} руб</div>
 				<input ref={refs.costs}></input>
 				<button onClick={applies.costs}>apply</button>
 			</div>
 
-			<div style={styles.item}>
-				<div>Прибыль: {revenue - costs} руб.</div>
+			<div className={classes.summaryRow}>
+				<div>Прибыль руб.</div>
+				<div>{revenue - costs}</div>
 			</div>
 
-			<div style={styles.item}>
-				<div>Суммарна прибыль: {stores.sum} руб.</div>
+			<div className={classes.summaryRow}>
+				<div>Суммарная прибыль руб.</div>
+				<div>{stores.sum}</div>
 			</div>
 		</div>
 	);

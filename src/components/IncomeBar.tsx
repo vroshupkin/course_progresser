@@ -1,9 +1,19 @@
 import { observer } from 'mobx-react-lite';
 import CSS from 'csstype';
-import { createRef, CSSProperties, FC, SyntheticEvent, useRef, useState } from 'react';
+import {
+	createRef,
+	CSSProperties,
+	FC,
+	SyntheticEvent,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from 'react';
 import { IncomeBarStore, IncomeBarStores } from './stores/IncomeBar.store';
 import { mergeObjects, TObject } from '../common/merge_json';
 import { IStyleDictionary } from '../common/layout_tools';
+import { createUseStyles } from 'react-jss';
 
 interface IncomeBarProps {
 	store: IncomeBarStore;
@@ -128,20 +138,43 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 	const current_store = stores.stores[stores.order_select];
 	const { revenue, costs } = { ...current_store };
 
+	const rowContainer = useId();
+
 	const styles: IStyleDictionary = {
 		container: {
 			width: '300px',
 			height: '200px',
 		},
 		item: {
-			display: 'flex',
+			// display: 'flex',
 		},
 	};
+
+	const classes = createUseStyles({
+		row: {
+			display: 'grid',
+			gridTemplateColumns: '2fr 1fr 1fr',
+
+			'& div, button': {
+				border: '1px solid #aaa',
+			},
+			'& input': {
+				border: '1px solid #aaa',
+				width: '100%',
+			},
+		},
+	})();
 
 	const refs: { [s: string]: React.RefObject<HTMLInputElement> } = {
 		revenue: createRef<HTMLInputElement>(),
 		costs: createRef<HTMLInputElement>(),
+		row: createRef<HTMLInputElement>(),
 	};
+
+	useEffect(() => {
+		console.log(refs.row.current?.style);
+		console.log(classes.row);
+	});
 
 	const applies: { [s: string]: () => void } = {
 		revenue: () => {
@@ -154,15 +187,15 @@ export const IncomeBarControl: FC<IncomeBarControlProps> = observer(({ stores: s
 
 	return (
 		<div style={styles.container}>
-			<div style={styles.item}>
+			<div ref={refs.row} className={classes.row} style={styles.item}>
 				<div>Доход: {revenue} руб.</div>
-				<input style={{ width: '50px' }} ref={refs.revenue}></input>
+				<input ref={refs.revenue}></input>
 				<button onClick={applies.revenue}>apply</button>
 			</div>
 
-			<div style={styles.item}>
+			<div className={classes.row} style={styles.item}>
 				<div>Расход: {costs} руб</div>
-				<input style={{ width: '50px' }} ref={refs.costs}></input>
+				<input ref={refs.costs}></input>
 				<button onClick={applies.costs}>apply</button>
 			</div>
 
@@ -192,8 +225,8 @@ export const IncomeBars: FC<IncomeBarControlsProps> = observer(({ stores }) => {
 
 	return (
 		<div style={styles.container}>
-			{stores.stores.map((s) => (
-				<IncomeBar store={s}></IncomeBar>
+			{stores.stores.map((s, i) => (
+				<IncomeBar key={i} store={s}></IncomeBar>
 			))}
 		</div>
 	);

@@ -12,6 +12,7 @@ import { IncomeBar, IncomeBarControl, IncomeBars } from './components/IncomeBar'
 import { IncomeBarStore, IncomeBarStores } from './components/stores/IncomeBar.store';
 import { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
+import { Table, TableStore } from './components/Table';
 
 const income_bar_store = new IncomeBarStore(100, 80);
 
@@ -36,6 +37,14 @@ for (const store of income_bar_stores.stores) {
 	i++;
 }
 
+const table_store = new TableStore([
+	['Название', 'Тип', 'Стоимость', 'Дата'],
+	['За приложение', '+', 15000, '23.03.23'],
+	['Вода', '-', 300, '24.03.23'],
+	['Еда', '-', 700, '24.03.23'],
+	['Электричество', '-', 700, '24.03.23'],
+]);
+
 export default function App(): JSX.Element {
 	const classes = createUseStyles({
 		main_font: {
@@ -58,6 +67,7 @@ export default function App(): JSX.Element {
 			<div className={classes.main_font}>
 				<IncomeBars stores={income_bar_stores}></IncomeBars>
 				<IncomeBarControl stores={income_bar_stores}></IncomeBarControl>
+				<Table store={table_store}></Table>
 			</div>
 		</>
 	);

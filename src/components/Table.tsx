@@ -17,24 +17,29 @@ import {
 import { observable, makeObservable, computed } from 'mobx';
 import { JsxElement } from 'typescript';
 
-export class TableStore {
-	@observable public data: (string | number)[][];
+export class TableStore 
+{
+  @observable public data: (string | number)[][];
 
-	constructor(data: (string | number)[][]) {
-		this.data = data;
-		makeObservable(this);
-	}
+  constructor(data: (string | number)[][]) 
+  {
+  	this.data = data;
+  	makeObservable(this);
+  }
 }
 
 interface ITableProps {
-	store: TableStore;
+  store: TableStore;
 }
 
-export const Table: FC<ITableProps> = observer(({ store }) => {
-	const generate_column_template = (len: number): string => {
+export const Table: FC<ITableProps> = observer(({ store }) => 
+{
+	const generate_column_template = (len: number): string => 
+	{
 		let str = '';
 		let i = 0;
-		while (i != len) {
+		while (i != len) 
+		{
 			str += '1fr ';
 			i++;
 		}
@@ -74,15 +79,18 @@ export const Table: FC<ITableProps> = observer(({ store }) => {
 		</div>
 	);
 
-	const mouse_over_block: React.MouseEventHandler<HTMLDivElement> = (e) => {
+	const mouse_over_block: React.MouseEventHandler<HTMLDivElement> = (e) => 
+	{
 		e.currentTarget.style.backgroundColor = '#fff';
 	};
 
-	const mouse_leave_block: React.MouseEventHandler<HTMLDivElement> = (e) => {
+	const mouse_leave_block: React.MouseEventHandler<HTMLDivElement> = (e) => 
+	{
 		e.currentTarget.style.backgroundColor = '';
 	};
 
-	const mouse_over_row: React.MouseEventHandler<HTMLDivElement> = (e) => {
+	const mouse_over_row: React.MouseEventHandler<HTMLDivElement> = (e) => 
+	{
 		// e.currentTarget.style.backgroundColor = '#dff0ff';
 		console.log(classes.rowHighlight);
 		e.currentTarget.classList.add(`${classes.rowHighlight}`);
@@ -92,11 +100,13 @@ export const Table: FC<ITableProps> = observer(({ store }) => {
 		// console.log(window.getComputedStyle(e.currentTarget));
 	};
 
-	const mouse_leave_row: React.MouseEventHandler<HTMLDivElement> = (e) => {
+	const mouse_leave_row: React.MouseEventHandler<HTMLDivElement> = (e) => 
+	{
 		e.currentTarget.classList.remove(classes.rowHighlight);
 	};
 
-	const Rows = () => {
+	const Rows = (): JSX.Element => 
+	{
 		const rows = store.data.slice(1).map((row, y) => (
 			<div
 				className={classes.row}
@@ -105,13 +115,17 @@ export const Table: FC<ITableProps> = observer(({ store }) => {
 				onMouseLeave={mouse_leave_row}
 			>
 				{row.map((block, x) => (
-					<div key={x} onMouseOver={mouse_over_block} onMouseLeave={mouse_leave_block}>
+					<div
+						key={x}
+						onMouseOver={mouse_over_block}
+						onMouseLeave={mouse_leave_block}
+					>
 						{block}{' '}
 					</div>
 				))}
 			</div>
 		));
-
+	
 		return <>{rows}</>;
 	};
 

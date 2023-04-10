@@ -28,7 +28,7 @@ describe('mergeObjects()', () =>
   };
 
   test('mergeObjects()', () => 
-{
+  {
     expect(expect_obj).toMatchObject(mergeObjects(obj_1, obj_2, obj_3));
   });
 });

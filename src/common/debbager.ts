@@ -1,17 +1,25 @@
-import { off } from "process";
+import { off } from 'process';
 
-export class Debagger {
-  constructor(private running: boolean) {}
+export class Debagger 
+{
+  constructor(private running: boolean) 
+  {}
 
-  log(str?: any): void {
-    if (this.running) console.log(str);
+  log(str?: any): void 
+  {
+    if (this.running) 
+    {
+      console.log(str);
+    }
   }
 
-  off(): void {
+  off(): void 
+  {
     this.running = false;
   }
 
-  on(): void {
+  on(): void 
+  {
     this.running = true;
   }
 }

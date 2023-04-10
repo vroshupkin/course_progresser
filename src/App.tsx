@@ -17,7 +17,7 @@ import {
   IncomeBars,
 } from './components/IncomeBar';
 import {
-   IncomeBarStore,
+  IncomeBarStore,
   IncomeBarStores,
 } from './components/stores/IncomeBar.store';
 import { useEffect } from 'react';
@@ -70,7 +70,7 @@ export default function App(): JSX.Element
   })();
 
   useEffect(() => 
-{
+  {
     load({
       google: {
         families: ['Anonymous Pro'],

@@ -21,6 +21,7 @@ export class ProcentStore
   get getValue(): number 
   {
     const length = this.max - this.min;
+    
     return this.procent * length + this.min;
   }
 

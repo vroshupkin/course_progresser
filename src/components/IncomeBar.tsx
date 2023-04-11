@@ -21,7 +21,7 @@ interface IncomeBarProps {
 
 export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) => 
 {
-  const [isHover, setIsHover] = useState(false);
+  const [ isHover, setIsHover ] = useState(false);
 
   const { revenue, costs } = { ...store };
 
@@ -123,6 +123,7 @@ export const IncomeBar: FC<IncomeBarProps> = observer(({ store }) =>
       setIsHover(false);
     },
   };
+  
   return (
     <div
       style={styles.container}

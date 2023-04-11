@@ -11,5 +11,6 @@ export function mergeObjects(
   {
     input = { ...input, ...obj };
   }
+  
   return input;
 }

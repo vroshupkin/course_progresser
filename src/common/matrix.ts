@@ -8,7 +8,7 @@ export class Matrix
     const n = m0.data[0].length;
     const m = m1.data[0].length;
 
-    const A = [[1], [2]];
+    const A = [ [ 1 ], [ 2 ] ];
 
     return new Matrix(A);
   }
@@ -44,6 +44,7 @@ export class Vector
       sum += vec_0.data[i] * this.data[i];
       i++;
     }
+    
     return sum;
   }
 
@@ -68,5 +69,6 @@ export function sliceColumn(arr: number[][], ordinal: number): number[]
   {
     out.push(row[ordinal]);
   }
+  
   return out;
 }

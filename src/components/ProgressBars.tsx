@@ -50,13 +50,12 @@ export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) =>
   const viewNumberProcents = (procent: number): string => 
   {
     const addSpace = 3 - `${procent}`.length;
-    // console.log(' '.repeat(addSpace) + procent);
-
+    
     return procent + '\xA0'.repeat(addSpace);
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container}>  
       {store.stores.map((s, i) => (
         <div style={styles.innerContainer}>
           <div style={{ width: '200px' }}>{purpleSchoolStep[i][2]}</div>
@@ -68,11 +67,11 @@ export const ProgressArray: FC<IProgressArrayProps> = observer(({ store }) =>
   );
 });
 
-interface IProgressBar_Div {
-	children?: any;
-	completeProgress?: number;
-	store: ProgressBarStore;
-}
+				interface IProgressBar_Div {
+					children?: any;
+					completeProgress?: number;
+					store: ProgressBarStore;
+				}
 
 class Cursor 
 {
@@ -96,7 +95,7 @@ class Cursor
 
 export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgress, store }) => 
 {
-  const [isDrag, setIsDrag] = useState<boolean>(false);
+  const [ isDrag, setIsDrag ] = useState<boolean>(false);
 
   // const cursor = new Cursor(0);
 
@@ -126,6 +125,7 @@ export const ProgressBarDiv: FC<IProgressBar_Div> = ({ children, completeProgres
   const calcPercent = (leftOffset: number): number => 
   {
     leftOffset -= cursorSize / 2;
+    
     return Math.floor(100 * leftOffset) / totalWidth;
   };
 
@@ -279,7 +279,7 @@ const ProgressBar2: FC<IProgressBarStore> = observer(({ store, children, contain
   const leftRefDiv = new Div(leftDiv);
   const rightRefDiv = new Div(rightDiv);
 
-  const [clickState, setClickState] = useState(false);
+  const [ clickState, setClickState ] = useState(false);
 
   const setProcentsInStore = (xPosition: number): void => 
   {

@@ -49,11 +49,11 @@ for (const store of income_bar_stores.stores)
 }
 
 const table_store = new TableStore([
-  ['Название', 'Тип', 'Стоимость', 'Дата'],
-  ['За приложение', '+', 15000, '23.03.23'],
-  ['Вода', '-', 300, '24.03.23'],
-  ['Еда', '-', 700, '24.03.23'],
-  ['Электричество', '-', 700, '24.03.23'],
+  [ 'Название', 'Тип', 'Стоимость', 'Дата' ],
+  [ 'За приложение', '+', 15000, '23.03.23' ],
+  [ 'Вода', '-', 300, '24.03.23' ],
+  [ 'Еда', '-', 700, '24.03.23' ],
+  [ 'Электричество', '-', 700, '24.03.23' ],
 ]);
 
 const storage = window.localStorage.setItem;
@@ -73,10 +73,11 @@ export default function App(): JSX.Element
   {
     load({
       google: {
-        families: ['Anonymous Pro'],
+        families: [ 'Anonymous Pro' ],
       },
     });
   }, []);
+  
   return (
     <>
       <div className={classes.main_font}>

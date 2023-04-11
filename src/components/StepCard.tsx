@@ -30,6 +30,7 @@ const StepCardName: FC<{ name: string }> = ({ name }) =>
       marginBottom: '15px',
     },
   };
+  
   return <div style={styles.div}>{name}</div>;
 };
 
@@ -197,7 +198,7 @@ const ProgressBar: FC<IProgressBarStore> = observer(
     leftRefDiv.changeWidth(leftWidth);
     rightRefDiv.changeWidth(containerWidth - leftWidth);
 
-    const [clickState, setClickState] = useState(false);
+    const [ clickState, setClickState ] = useState(false);
 
     const setProcentsInStore = (xPosition: number): void => 
     {

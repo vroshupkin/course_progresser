@@ -23,6 +23,9 @@
 		"quotes": ["error", "single"],
 		"indent": ["error", 2],
 		"no-multiple-empty-lines": 	["error", {"max": 2}],
-		"semi": ["error", "always"]
+		"semi": ["error", "always"],
+		"newline-before-return": ["error"],
+		"object-curly-spacing": ["error", "always"],
+		"array-bracket-spacing": ["error", "always"]
 	}
 }

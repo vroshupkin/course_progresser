@@ -77,6 +77,7 @@ class TodoStore
       return '<none>';
     }
     const nextTodo = this.todos.find((todo) => todo.completed === false);
+    
     return (
       `Next todo: "${nextTodo ? nextTodo.task : '<none>'}". ` +
       `Progress: ${this.completedTodosCount}/${this.todos.length}`
@@ -146,7 +147,7 @@ class Store_1
 
   get level(): number 
   {
-    const constrainValues = [0, 30, 50, 70];
+    const constrainValues = [ 0, 30, 50, 70 ];
 
     for (let i = 0; i < constrainValues.length; i++) 
     {
@@ -155,6 +156,7 @@ class Store_1
         return i;
       }
     }
+    
     return constrainValues.length;
   }
 }
@@ -169,7 +171,7 @@ const ShowVal: React.FC<IWithStore1> = observer(({ store }) =>
 
 const ShowLevel: React.FC<IWithStore1> = observer(({ store }) => 
 {
-  const colors = ['red', 'yellow', 'orange', 'green', 'white'];
+  const colors = [ 'red', 'yellow', 'orange', 'green', 'white' ];
   const colorDiv = useRef<HTMLDivElement>(null);
 
   if (colorDiv.current) 

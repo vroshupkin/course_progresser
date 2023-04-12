@@ -90,8 +90,8 @@ export default function App(): JSX.Element
       </div>
     
       <div style={{ display: 'flex' }}>
-        <Timer a=''></Timer>
-        <Timer a=''></Timer>
+        <Timer name='Верстка компонента' type='common'></Timer>
+        <Timer name='Варка яиц' type='timeout'></Timer>
       </div>
       
     </div>

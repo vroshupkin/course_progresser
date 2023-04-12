@@ -48,10 +48,11 @@ export class TimerStore
 
 interface ITimerProps {
   // store: TimerStore;
-  a: string;
+  name: string;
+  type: 'timeout' | 'common'
 }
 
-const FCTimer: FC<{a: string}> = (props) => 
+const FCTimer: FC<ITimerProps> = (props) => 
 {
   
   const colors = {
@@ -72,7 +73,12 @@ const FCTimer: FC<{a: string}> = (props) =>
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',  
-        height: '100%'
+        height: '100%',
+        cursor: 'pointer',
+        caretColor: 'transparent',
+        '&:hover': {
+          background: 'white'
+        }
       }
     },
 
@@ -118,20 +124,23 @@ const FCTimer: FC<{a: string}> = (props) =>
     },
     
     current_time: {
-      width: '70px',
+      width: props.type == 'common'? '200px' : '70px',
       height: '29px',
       border: 'solid #000 1px',
       marginLeft: '49px'
     },
 
     delimeter: {
+      display: props.type == 'common'? 'none' : 'block',
       width: '27px',
       height: '29px',
       border: 'solid #000 1px',
-      marginLeft: '11px'
+      marginLeft: '11px',
+      
     },
 
     all_time: {
+      display: props.type == 'common'? 'none' : 'block',
       width: '70px',
       height: '29px',
       border: 'solid #000 1px',
@@ -152,13 +161,23 @@ const FCTimer: FC<{a: string}> = (props) =>
         border: 'solid 1px #000',
         width: '27px',
         height: '27px',
+        '&:hover': {
+          backgroundColor: '#fff',
+          cursor: 'pointer'  
+        }
       }
     },
 
-    play: { marginLeft: '93px' },
-    pause: { marginLeft: '10px' },
-    reset: { marginLeft: '10px' },
-
+    play:{
+      marginLeft: '93px', 
+    },
+    pause: {
+      marginLeft: '10px',
+    },
+    reset: {
+      marginLeft: '10px',
+    },
+     
     reset_icon: {},
     play_icon: {},
     pause_icon: {}
@@ -171,7 +190,7 @@ const FCTimer: FC<{a: string}> = (props) =>
 
       <div className={classes.row_1}>
         <div className={classes.name}>
-          <span className={classes.bold_font}>{'Название таймера'}</span>
+          <span className={classes.bold_font}>{props.name}</span>
         </div>
 
         <div className={classes.status}></div>

@@ -23,6 +23,8 @@ import {
 import { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Table, TableStore } from './components/Table';
+import { Example_1, StoreExample_1 } from './examples/Example_1';
+import { Timer } from './components/Timer';
 
 const income_bar_store = new IncomeBarStore(100, 80);
 
@@ -65,6 +67,7 @@ export default function App(): JSX.Element
       '& *': {
         fontFamily: 'Anonymous Pro',
         fontSize: '14px',
+        boxSizing: 'content-box'
       },
     },
   })();
@@ -79,12 +82,18 @@ export default function App(): JSX.Element
   }, []);
   
   return (
-    <>
-      <div className={classes.main_font}>
+    <div className={classes.main_font}>
+      <div>
         <IncomeBars stores={income_bar_stores}></IncomeBars>
         <IncomeBarControl stores={income_bar_stores}></IncomeBarControl>
         <Table store={table_store}></Table>
       </div>
-    </>
+    
+      <div style={{ display: 'flex' }}>
+        <Timer a=''></Timer>
+        <Timer a=''></Timer>
+      </div>
+      
+    </div>
   );
 }

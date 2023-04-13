@@ -24,7 +24,7 @@ import { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Table, TableStore } from './components/Table';
 import { Example_1, StoreExample_1 } from './examples/Example_1';
-import { Timer } from './components/Timer';
+import { Timer, TimerStore, Timer_05_sec } from './components/Timer';
 
 const income_bar_store = new IncomeBarStore(100, 80);
 
@@ -90,8 +90,10 @@ export default function App(): JSX.Element
       </div>
     
       <div style={{ display: 'flex' }}>
-        <Timer name='Верстка компонента' type='common'></Timer>
-        <Timer name='Варка яиц' type='timeout'></Timer>
+        
+        <Timer name='Варка яиц' type='timeout' store={new TimerStore(200)} timer_05={Timer_05_sec.GetInstance()}></Timer>
+        <Timer name='Hello' type='common' store={new TimerStore(200)} timer_05={Timer_05_sec.GetInstance()}></Timer>
+        <Timer name='Верстка компонента' type='common' store={new TimerStore(200)} timer_05={Timer_05_sec.GetInstance()}></Timer>
       </div>
       
     </div>

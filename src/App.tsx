@@ -95,19 +95,25 @@ export default function App(): JSX.Element
           
           type='timeout'
           store={new TimerStore(30)}
-          input_store={new InputNameStore('Варка яиц')}/>
-
+          input_store={new InputNameStore('Варка яиц')}
+          input_all_time_store={new InputNameStore('')}
+        />
+          
         
         <Timer
           type='common'
           store={new TimerStore()}
-          input_store={new InputNameStore('Hello яиц')}/>
+          input_store={new InputNameStore('Hello яиц')}
+          input_all_time_store={new InputNameStore('')}
+        />
 
 
         <Timer
           type='common'
           store={new TimerStore()}
-          input_store={new InputNameStore('Верстка компонента')}/>
+          input_store={new InputNameStore('Верстка компонента')}
+          input_all_time_store={new InputNameStore('')}
+        />
 
       
       </div>

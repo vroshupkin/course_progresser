@@ -92,7 +92,7 @@ export const Table: FC<ITableProps> = observer(({ store }) =>
   const mouse_over_row: React.MouseEventHandler<HTMLDivElement> = (e) => 
   {
     // e.currentTarget.style.backgroundColor = '#dff0ff';
-    console.log(classes.rowHighlight);
+
     e.currentTarget.classList.add(`${classes.rowHighlight}`);
 
     // e.currentTarget.classList.forEach((v) => console.log(v));

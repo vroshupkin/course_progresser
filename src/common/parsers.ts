@@ -29,3 +29,23 @@ export const TimeParser = (str: string): number =>
   
   return sum;
 }; 
+
+export const SecondsTo_hh_mm_ss = (seconds: number) => 
+{
+  const hours = Math.floor(seconds/3600);
+  seconds -= hours * 3600;
+  const minutes = Math.floor(seconds/60);
+  seconds -= minutes * 60;
+ 
+  const to_str = (t: number) => 
+  {
+    if(t < 10)
+    {
+      return '0' + t;
+    }
+    
+    return t + '';
+  };
+  
+  return `${to_str(hours)}:${to_str(minutes)}:${to_str(seconds)}`;
+};

@@ -30,7 +30,7 @@ export const TimeParser = (str: string): number =>
   return sum;
 }; 
 
-export const SecondsTo_hh_mm_ss = (seconds: number) => 
+export const SecondsTo_hh_mm_ss = (seconds: number): string => 
 {
   const hours = Math.floor(seconds/3600);
   seconds -= hours * 3600;

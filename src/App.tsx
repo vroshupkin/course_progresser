@@ -25,6 +25,7 @@ import { createUseStyles } from 'react-jss';
 import { Table, TableStore } from './components/Table';
 import { Example_1, StoreExample_1 } from './examples/Example_1';
 import { InputNameStore, Timer, TimerStore, Timer_05_sec } from './components/Timer';
+import { CalcStore, TimeConverter } from './components/TimeConverter';
 
 const income_bar_store = new IncomeBarStore(100, 80);
 
@@ -115,7 +116,9 @@ export default function App(): JSX.Element
           input_all_time_store={new InputNameStore('')}
         />
 
-      
+        <TimeConverter calc_store = {new CalcStore(120, 60)}/>
+
+
       </div>
     </div>
   );

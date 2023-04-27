@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 
 import CSS from 'csstype';
 import { observable, action, computed, makeObservable, makeAutoObservable, autorun, transaction } from 'mobx';
-import { CSSProperties, FC, ReactElement, useEffect, useState } from 'react';
+import { CSSProperties, FC, ReactElement, SetStateAction, useEffect, useState } from 'react';
 import { BsFillPlayFill } from 'react-icons/bs';
 import {  BiPause, BiSave } from 'react-icons/bi';
 import { VscDebugRestart } from 'react-icons/vsc';
@@ -61,6 +61,23 @@ export class Timer_05_sec
     
 }
 
+
+export class TimeStore
+{
+  @observable public seconds;
+
+  constructor(seconds = 0)
+  {
+    this.seconds = seconds;
+    makeObservable(this);
+  }
+
+  @action
+  ChangeSeconds(seconds: number)
+  {
+    this.seconds = seconds;
+  }
+}
 
 export class TimerStore
 {
@@ -290,12 +307,11 @@ interface IInputTime {
   store: TimerStore;
 
 }
-const InputTime: FC<IInputTime> = observer(
+export const InputTime: FC<{store: TimerStore}> = observer(
   ({ store }) => 
   {
-    const [ input_validate, change_input_validate ] = useState(false);
     const [ mode, change_mode ] = useState<'view' | 'input'>('view');
-    
+
     const class_names = createUseStyles(
       {
       
@@ -362,9 +378,8 @@ const InputTime: FC<IInputTime> = observer(
 
     const input_on_change = (e: React.ChangeEvent<HTMLInputElement>) => 
     {
-      all_time= TimeParser(e.currentTarget.value);
-      console.log(all_time);
-    
+      all_time = TimeParser(e.currentTarget.value);
+      
       e.currentTarget.classList.remove(class_names.not_validate);
       e.currentTarget.classList.remove(class_names.is_validate);
 
@@ -390,7 +405,6 @@ const InputTime: FC<IInputTime> = observer(
       {
         change_mode('view');
       }
-
     };
 
   

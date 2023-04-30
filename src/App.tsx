@@ -26,52 +26,16 @@ import { Table, TableStore } from './components/Table';
 import { Example_1, StoreExample_1 } from './examples/Example_1';
 import { InputNameStore, Timer, TimerStore, Timer_05_sec } from './components/Timer';
 import { CalcStore, TimeConverter } from './components/TimeConverter';
+import { Login, LoginStore } from './pages/Login.page';
+import { Route, Router, Routes } from 'react-router-dom';
+import { Timers } from './pages/Timers.page';
+import { IncomeBarsPage } from './pages/IncomeBars.page';
 
-const income_bar_store = new IncomeBarStore(100, 80);
-
-const income_bar_stores: IncomeBarStores = new IncomeBarStores(
-  [
-    new IncomeBarStore(100, 80),
-    new IncomeBarStore(70, 50),
-    new IncomeBarStore(55, 45),
-    new IncomeBarStore(99, 12),
-    new IncomeBarStore(64, 55),
-    new IncomeBarStore(60, 2),
-    new IncomeBarStore(60, 60),
-  ],
-  0
-);
-
-let i = 0;
-for (const store of income_bar_stores.stores) 
-{
-  store.stores = income_bar_stores;
-  store.order = i;
-  // console.log(store.stores);
-  i++;
-}
-
-const table_store = new TableStore([
-  [ 'Название', 'Тип', 'Стоимость', 'Дата' ],
-  [ 'За приложение', '+', 15000, '23.03.23' ],
-  [ 'Вода', '-', 300, '24.03.23' ],
-  [ 'Еда', '-', 700, '24.03.23' ],
-  [ 'Электричество', '-', 700, '24.03.23' ],
-]);
 
 const storage = window.localStorage.setItem;
 
 export default function App(): JSX.Element 
 {
-  const classes = createUseStyles({
-    main_font: {
-      '& *': {
-        fontFamily: 'Anonymous Pro',
-        fontSize: '14px',
-        boxSizing: 'content-box'
-      },
-    },
-  })();
 
   useEffect(() => 
   {
@@ -81,45 +45,23 @@ export default function App(): JSX.Element
       },
     });
   }, []);
+
+  const classes = createUseStyles({
+    fonts: {
+      '& span':{
+        fontFamily: 'Anonymous Pro'
+      }
+    }
+  })();
   
   return (
-    <div className={classes.main_font}>
-      <div>
-        <IncomeBars stores={income_bar_stores}></IncomeBars>
-        <IncomeBarControl stores={income_bar_stores}></IncomeBarControl>
-        <Table store={table_store}></Table>
-      </div>
-    
-      <div style={{ display: 'flex' }}>
-        
-        <Timer
-          
-          type='timeout'
-          store={new TimerStore(30)}
-          input_store={new InputNameStore('Варка яиц')}
-          input_all_time_store={new InputNameStore('')}
-        />
-          
-        
-        <Timer
-          type='common'
-          store={new TimerStore()}
-          input_store={new InputNameStore('Hello яиц')}
-          input_all_time_store={new InputNameStore('')}
-        />
-
-
-        <Timer
-          type='common'
-          store={new TimerStore()}
-          input_store={new InputNameStore('Верстка компонента')}
-          input_all_time_store={new InputNameStore('')}
-        />
-
-        <TimeConverter calc_store = {new CalcStore(120, 60)}/>
-
-
-      </div>
+    <div className={classes.fonts}>
+      <Routes>
+        <Route path="/income-bars" element={<IncomeBarsPage a=''/>}/>
+        <Route path="/login" element={<Login store={new LoginStore()} />}/>
+        <Route path="/timers" element={<Timers store={null}/>}/>
+      </Routes>
     </div>
+
   );
 }

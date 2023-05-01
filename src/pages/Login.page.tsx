@@ -120,19 +120,29 @@ export const Login: FC<{store: LoginStore}> = observer(({ store }) =>
     input:
     {
       height: '20px'
+    },
+
+    wrapper: 
+    {
+      display: 'flex',
+      justifyContent: 'center'
     }
 
   })();
   
 
   return(
-    <div className={styles.container}>
-      <div className={styles.text}>
-        <span>Вход в систему</span>
+    <div className={styles.wrapper}>
+        
+      <div className={styles.container}>
+        <div className={styles.text}>
+          <span>Вход в систему</span>
+        </div>
+        <input  className={styles.input} onChange={store.OnChangeLogin} placeholder='Login'/>
+        <input  className={styles.input} onChange={store.OnChangePassword} placeholder='Password' type='password'/>
+        <button className={styles.button} onClick={store.ClickEnter}>Войти</button>
       </div>
-      <input  className={styles.input} onChange={store.OnChangeLogin} placeholder='Login'/>
-      <input  className={styles.input} onChange={store.OnChangePassword} placeholder='Password' type='password'/>
-      <button className={styles.button} onClick={store.ClickEnter}>Войти</button>
+        
     </div>
   );
 });

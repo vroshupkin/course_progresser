@@ -30,9 +30,13 @@ import { Login, LoginStore } from './pages/Login.page';
 import { Route, Router, Routes } from 'react-router-dom';
 import { Timers } from './pages/Timers.page';
 import { IncomeBarsPage } from './pages/IncomeBars.page';
+import { LeftMenu, LeftMenuStore } from './components/LeftMenu';
+import {  LINK } from './constants';
 
 
 const storage = window.localStorage.setItem;
+
+const leftMenuStore = new LeftMenuStore();
 
 export default function App(): JSX.Element 
 {
@@ -47,20 +51,33 @@ export default function App(): JSX.Element
   }, []);
 
   const classes = createUseStyles({
-    fonts: {
-      '& span':{
-        fontFamily: 'Anonymous Pro'
-      }
-    }
+    container: {
+      '& *':{
+        fontFamily: 'Anonymous Pro',
+        fontSize: '12px'
+      },
+      display: 'grid',
+      gridTemplateColumns: '1fr 9fr'
+      
+    },
+
   })();
   
   return (
-    <div className={classes.fonts}>
-      <Routes>
-        <Route path="/income-bars" element={<IncomeBarsPage a=''/>}/>
-        <Route path="/login" element={<Login store={new LoginStore()} />}/>
-        <Route path="/timers" element={<Timers store={null}/>}/>
-      </Routes>
+    
+    <div className={classes.container}>
+      <div>
+        <LeftMenu store={leftMenuStore}/>
+      </div>
+      
+      <div>
+        <Routes>
+          <Route path={LINK.INCOME_BARS} element={<IncomeBarsPage a=''/>}/>
+          <Route path={LINK.USER} element={<Login store={new LoginStore()} />}/>
+          <Route path={LINK.TIMERS} element={<Timers store={null}/>}/>
+        </Routes>  
+      </div>
+      
     </div>
 
   );

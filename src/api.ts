@@ -16,7 +16,6 @@ export async function post(url = '', body = {})
     body: JSON.stringify(body), // body data type must match "Content-Type" header
   });
   
-  console.log(body);
   
   return response.json(); // parses JSON response into native JavaScript objects
 }

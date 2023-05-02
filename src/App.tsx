@@ -56,8 +56,8 @@ export default function App(): JSX.Element
         fontFamily: 'Anonymous Pro',
         fontSize: '12px'
       },
-      display: 'grid',
-      gridTemplateColumns: '1fr 9fr'
+      display: 'flex',
+      
       
     },
 

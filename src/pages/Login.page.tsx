@@ -1,6 +1,6 @@
 import { action, makeAutoObservable, makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import { createUseStyles } from 'react-jss';
 import { api, post } from '../api';
 import { REACT_APP_BACKEND_URL_DEV } from '../constants';
@@ -32,17 +32,17 @@ export class LoginStore
   login = '';
   password = '';
 
+  login_error = '';
+  password_error ='';
+  
+
   constructor()
   {
     makeAutoObservable(this);
   }
 
   OnChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) =>
-  {
-    console.log(e.target.value);
-    console.log(this.login);
-    console.log(this);
-    
+  { 
     this.login = e.target.value;
   };
 
@@ -53,28 +53,28 @@ export class LoginStore
 
   ClickEnter = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>)  =>
   {
-    
-    
-    // const access_token = await fetch(process.env.BACKEND_URL_DEV + '/auth/');
-    
-    // const dto = 
-    // {
-    //   userName: this.login,
-    //   password: this.password
-    // };
+    this.login_error = '';
+    this.password_error = '';
 
     const dto = 
     {
-      'userName': 'admin',
-      'password': 'admin admin'
+      'userName': this.login,
+      'password': this.password
     };
-    // console.log(dto);
     
-    // const res = await api.post(REACT_APP_BACKEND_URL_DEV + '/auth/signin', dto);
-    const res = await post(REACT_APP_BACKEND_URL_DEV + '/auth/signin', dto);
-    console.log(res);
+    const res = await post('/auth/signin', dto) as {login_error?: string, password_error?: string};
+
+
+    if(res.login_error) 
+    {
+      this.login_error = 'Неправильно задан логин'; 
+    }
     
-    // await api.post(process.env.BACKEND_URL_DEV + '/auth/')
+    if(res.password_error)
+    {
+      this.password_error = 'Неправильно задан пароль';
+    }
+    
   };
 }
 
@@ -129,8 +129,14 @@ export const Login: FC<{store: LoginStore}> = observer(({ store }) =>
     }
 
   })();
-  
 
+  const RedSpan = (input: {children: string}) =>
+  {
+    return (
+      <span style={{ color: 'red' }}>{input.children}</span>
+    );
+  }; 
+  
   return(
     <div className={styles.wrapper}>
         
@@ -138,8 +144,13 @@ export const Login: FC<{store: LoginStore}> = observer(({ store }) =>
         <div className={styles.text}>
           <span>Вход в систему</span>
         </div>
+
+        <RedSpan>{store.login_error}</RedSpan>
         <input  className={styles.input} onChange={store.OnChangeLogin} placeholder='Login'/>
+
+        <RedSpan>{store.password_error}</RedSpan>
         <input  className={styles.input} onChange={store.OnChangePassword} placeholder='Password' type='password'/>
+
         <button className={styles.button} onClick={store.ClickEnter}>Войти</button>
       </div>
         

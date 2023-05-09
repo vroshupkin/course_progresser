@@ -43,19 +43,26 @@ export class LoginStore
 
   OnChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) =>
   { 
+    this.default_error();
     this.login = e.target.value;
   };
 
   OnChangePassword = (e: React.ChangeEvent<HTMLInputElement>) =>
   {
+    this.default_error();
     this.password = e.target.value;
   };
 
-  ClickEnter = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>)  =>
+  private default_error()
   {
     this.login_error = '';
     this.password_error = '';
+  }
 
+  ClickEnter = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>)  =>
+  {
+    this.default_error();
+    
     const dto = 
     {
       'userName': this.login,

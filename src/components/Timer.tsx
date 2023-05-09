@@ -2,7 +2,7 @@ import { mergeObjects, TObject } from '../common/merge_json';
 import { IStyleDictionary } from '../common/layout_tools';
 import { createUseStyles } from 'react-jss';
 import { observer } from 'mobx-react-lite';
-
+import { JssStyle } from 'jss';
 
 import CSS from 'csstype';
 import { observable, action, computed, makeObservable, makeAutoObservable, autorun, transaction } from 'mobx';
@@ -13,6 +13,31 @@ import { VscDebugRestart } from 'react-icons/vsc';
 import { inspect } from 'util';
 import { center_block_flex } from '../common/css_helper/classes';
 import { SecondsTo_hh_mm_ss, TimeParser } from '../common/parsers';
+import { colors } from './styles/colors';
+
+export const timer_container_class: JssStyle = 
+  {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '310px',
+    height: '140px',
+    background: `${colors.gray_1}`,
+    border: 'solid #878787 1px',
+
+    '& span': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',  
+      height: '100%',
+      cursor: 'pointer',
+      caretColor: 'transparent',
+      userSelect: 'none',
+
+      '&:hover': {
+        background: 'white',
+      }
+    }
+  };
 
 export class Timer_05_sec
 {
@@ -466,35 +491,10 @@ export const Timer: FC<ITimerProps> = observer(
     }) => 
 
   {
-    const colors = {
-      gray_1: '#EBEBEB',
-      gray_2: '#878787'
-    };
 
-  
+
     const classes = createUseStyles({
-      container: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '310px',
-        height: '140px',
-        background: `${colors.gray_1}`,
-        border: 'solid #878787 1px',
-
-        '& span': {
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',  
-          height: '100%',
-          cursor: 'pointer',
-          caretColor: 'transparent',
-          userSelect: 'none',
-      
-          '&:hover': {
-            background: 'white',
-          }
-        }
-      },
+      container: timer_container_class,
 
       bold_font: {
         fontSize: '12px',

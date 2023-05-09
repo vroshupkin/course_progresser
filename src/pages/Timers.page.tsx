@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { createUseStyles } from 'react-jss';
 import { CalcStore, TimeConverter } from '../components/TimeConverter';
 import { InputNameStore, Timer, TimerStore } from '../components/Timer';
+import { Navigate } from 'react-router-dom';
 
 
 export const Timers: FC<{store: null}> = observer(({ store }) => 
@@ -48,5 +49,12 @@ export const Timers: FC<{store: null}> = observer(({ store }) =>
       <TimeConverter calc_store = {new CalcStore(120, 60)}/>
 
     </div>
+  );
+});
+
+const UnAuthTimers = () => observer(() => 
+{
+  return(
+    <Navigate to="/error-page" replace/>
   );
 });

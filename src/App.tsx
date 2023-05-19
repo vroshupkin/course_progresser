@@ -1,31 +1,9 @@
-import { Dictionary } from './common/dictionary.interface.';
-import { MobxComponent, MobxTimer } from './components/MobxTimer';
-import { ProgressArray } from './components/ProgressBars';
 
-import {
-  ProgressBarStore,
-  StoreManyProgressBar,
-} from './components/stores/ProgressBar.store';
 import { load } from 'webfontloader';
-import { StepCard, VideoCard } from './components/StepCard';
-import { ProcentStore } from './components/stores/ProcentStore.store';
-import { course_10_name, step_10 } from './data/purpleSchoolNodeJS';
-import CSS from 'csstype';
-import {
-  IncomeBar,
-  IncomeBarControl,
-  IncomeBars,
-} from './components/IncomeBar';
-import {
-  IncomeBarStore,
-  IncomeBarStores,
-} from './components/stores/IncomeBar.store';
+
 import { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
-import { Table, TableStore } from './components/Table';
-import { Example_1, StoreExample_1 } from './examples/Example_1';
-import { InputNameStore, Timer, TimerStore, Timer_05_sec } from './components/Timer';
-import { CalcStore, TimeConverter } from './components/TimeConverter';
+
 import { Login, LoginStore } from './pages/Login.page';
 import { Route, Router, Routes } from 'react-router-dom';
 import { Timers } from './pages/Timers.page';

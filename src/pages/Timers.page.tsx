@@ -4,6 +4,8 @@ import { createUseStyles } from 'react-jss';
 import { CalcStore, TimeConverter } from '../components/TimeConverter';
 import { InputNameStore, Timer, TimerStore } from '../components/Timer';
 import { Navigate } from 'react-router-dom';
+import { Calendar } from '../components/Calendar';
+import { CalendarStore } from '../components/stores/Calendar.store';
 
 
 export const Timers: FC<{store: null}> = observer(({ store }) => 
@@ -18,43 +20,58 @@ export const Timers: FC<{store: null}> = observer(({ store }) =>
         }
   })();
   
+  const calendar_store = new CalendarStore(new Date(Date.now()));
 
   return(
-    <div style={{ display: 'flex' }}>
-        
-      <Timer
+    <div>
+      <div style={{ display: 'flex' }}>
           
-        type='timeout'
-        store={new TimerStore(30)}
-        input_store={new InputNameStore('Варка яиц')}
-        input_all_time_store={new InputNameStore('')}
-      />
+        <Timer
+            
+          type='timeout'
+          store={new TimerStore(30)}
+          input_store={new InputNameStore('Варка яиц')}
+          input_all_time_store={new InputNameStore('')}
+        />
+            
           
+        <Timer
+          type='common'
+          store={new TimerStore()}
+          input_store={new InputNameStore('Hello яиц')}
+          input_all_time_store={new InputNameStore('')}
+        />
+
+
+        <Timer
+          type='common'
+          store={new TimerStore()}
+          input_store={new InputNameStore('Верстка компонента')}
+          input_all_time_store={new InputNameStore('')}
+        />
+
+        <TimeConverter calc_store = {new CalcStore(120, 60)}/>
         
-      <Timer
-        type='common'
-        store={new TimerStore()}
-        input_store={new InputNameStore('Hello яиц')}
-        input_all_time_store={new InputNameStore('')}
-      />
 
+      </div>
 
-      <Timer
-        type='common'
-        store={new TimerStore()}
-        input_store={new InputNameStore('Верстка компонента')}
-        input_all_time_store={new InputNameStore('')}
-      />
+      <div>
+        <Calendar store={calendar_store}/>
 
-      <TimeConverter calc_store = {new CalcStore(120, 60)}/>
-
+      </div>
     </div>
   );
 });
 
-const UnAuthTimers = () => observer(() => 
+const UnauthTimers = () => observer(() => 
 {
   return(
-    <Navigate to="/error-page" replace/>
+    <Navigate to="/login" replace/>
   );
 });
+
+// export TimersPage = () => observer(() => {
+
+// })
+
+

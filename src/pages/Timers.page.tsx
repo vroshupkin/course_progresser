@@ -51,13 +51,10 @@ export const Timers: FC<{store: null}> = observer(({ store }) =>
         />
 
         <TimeConverter calc_store = {new CalcStore(120, 60)}/>
-        
-
       </div>
-
+      
       <div>
         <Calendar store={calendar_store}/>
-
       </div>
     </div>
   );
@@ -69,9 +66,3 @@ const UnauthTimers = () => observer(() =>
     <Navigate to="/login" replace/>
   );
 });
-
-// export TimersPage = () => observer(() => {
-
-// })
-
-

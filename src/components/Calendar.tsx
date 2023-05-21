@@ -7,22 +7,126 @@ import {
 } from 'react';
 import { createUseStyles } from 'react-jss';
 import { CalendarStore } from './stores/Calendar.store';
+import { generate } from '../common/generator';
+
+
+const getMonth = (order: number) => 
+  [ 'Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь' ][order];
 
 
 interface CalendarProps {
   store: CalendarStore;
 }
 
+const text_center_style = 
+{
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+    
+const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) => 
+{   
+  const classes = createUseStyles({
+
+    day: {
+        
+      '& div': {
+        display: 'flex',
+        justifyContent: 'center',
+        userSelect: 'none',
+          
+          
+        '& div': {
+          height: '12px',
+          width: '44px',
+          cursor: 'pointer',
+          ...text_center_style,
+
+          '&:hover': {
+            background: 'white',
+            color: 'black'
+          }
+
+        }
+          
+      }
+    },
+
+    day_select:{
+      background: '#1A6400',
+      color: 'white'
+    }
+      
+     
+  })();
+
+  const DayDiv: FC<{day: number}> = ({ day }) => 
+  {
+    const class_name = day == store.date.getDate()? classes.day_select : '';
+    console.log(store.date.getDate());
+      
+    console.log(day == store.date.getDate());
+    
+    return (
+      <div className={class_name} onClick={() => store.changeDay(day)}>
+        <span>{day}</span>
+      </div>
+    );
+  };
+
+  const FirstAndLastWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
+  {
+    const days = [ start_day ];
+    while(days.length < 7)
+    {
+      const day = days[days.length - 1] + 1;
+
+      let next_day = day % (count_days_of_month + 1);
+      
+      if(next_day == 0)
+      {
+        next_day = 1;
+      }
+      days.push(next_day);
+    }
+
+    return(
+      <div>
+        {days.map(v => <DayDiv day={v}/>)}
+      </div>
+    ); 
+    
+  };
+
+  const Week: FC<{start_day: number}> = ({ start_day }) => 
+  {
+
+    return(
+      <div>
+        {generate(start_day, start_day + 7).map(v => <DayDiv day={v}/>)}
+      </div>
+    ); 
+    
+  };
+
+  return (
+   
+    <div className={classes.day}>
+      <FirstAndLastWeek start_day={store.firstDay} count_days_of_month={store.countDayOfPrevMonths}/>
+      <Week start_day={7 - store.startDayWeekOfMonth + 1}/>
+      <Week start_day={2 * 7 - store.startDayWeekOfMonth + 1}/>
+      <Week start_day={3 * 7 - store.startDayWeekOfMonth + 1}/>
+      <FirstAndLastWeek start_day={4 * 7 - store.startDayWeekOfMonth + 1} count_days_of_month={store.countDayOfMonth}/>
+    
+    </div>
+  );
+});
 export const Calendar: FC<CalendarProps> = observer(
   ({ store }) => 
   {
-    const text_center_style = 
-    {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    };
-    
+
 
     const classes = createUseStyles({
       container:{
@@ -40,7 +144,9 @@ export const Calendar: FC<CalendarProps> = observer(
         '& div': {
           height: '19px',
           background: '#1A6400',
-          ...text_center_style
+          ...text_center_style,
+          userSelect: 'none',
+          
         },
         '& div:nth-child(n + 1)': 
         {
@@ -63,6 +169,8 @@ export const Calendar: FC<CalendarProps> = observer(
           height: '20px',
           ...text_center_style,
           cursor: 'pointer',
+          userSelect: 'none',
+          
         },
       },
 
@@ -82,17 +190,14 @@ export const Calendar: FC<CalendarProps> = observer(
       year_select: {
         background: '#1A6400',
         color: 'white',
-        '&:hover': {
-          background: 'white',
-          color: 'black'
-        }
+        
       },
 
       now_year: {
         background: '#1A6400'
       },
 
-      month_select: {
+      month: {
         display: 'flex',
         justifyContent: 'center',
         flexWrap: 'wrap',
@@ -104,24 +209,33 @@ export const Calendar: FC<CalendarProps> = observer(
         '& div': {
           height: '16px',
           width: '54px',
-          background: '#FFFFFF',
           cursor: 'pointer',
+          userSelect: 'none',
           
           ...text_center_style,
-          '&:hover': {
-            background: '#ADADAD',
-            color: 'white',
-          },
-
         }
         
       },
 
-      day_select: {
+      month_select: {
+        background: '#1A6400',
+        color: 'white',
+      },
+
+      month_bypass: {
+        background: '#FFFFFF',
+        '&:hover': {
+          background: '#ADADAD',
+          color: 'white',
+        },
+      },
+
+      day: {
         
         '& div': {
           display: 'flex',
           justifyContent: 'center',
+          userSelect: 'none',
           
           
           '& div': {
@@ -138,18 +252,22 @@ export const Calendar: FC<CalendarProps> = observer(
           }
           
         }
+      },
+
+      day_select:{
+        background: '#1A6400',
+        color: 'white'
       }
+      
      
     })();
 
     const refs: { [s: string]: React.RefObject<HTMLDivElement> } = {
       year_ref: createRef<HTMLDivElement>(),
-    //   costs: createRef<HTMLInputElement>(),
-    //   row: createRef<HTMLInputElement>(),
     };
 
-    const [ startYear, setStartYear ] = useState(store.date.getFullYear() - 2);
     
+    const [ startYear, setStartYear ] = useState(store.date.getFullYear() - 2);
 
     const YearDiv: FC<{year: number}> = ({ year }) => 
     {      
@@ -164,14 +282,28 @@ export const Calendar: FC<CalendarProps> = observer(
 
     
     const YearDivNext = () =>   
-      <div className={classes.year_next_or_previous} onClick={() => setStartYear(startYear + 1)}>
+      <div className={classes.year_next_or_previous} onClick={() => setStartYear(startYear + 5)}>
         <span>{'>>'}</span>
       </div>;
     
     const YearDivPrevious = () => 
-      <div className={classes.year_next_or_previous} onClick={() => setStartYear(startYear - 1)}>
+      <div className={classes.year_next_or_previous} onClick={() => setStartYear(startYear - 5)}>
         <span>{'<<'}</span>
       </div>;
+
+    const MonthDiv: FC<{month_order: number}> = ({ month_order }) => 
+    {
+      const class_name = month_order == store.date.getMonth()? classes.month_select : classes.month_bypass;
+        
+      return(
+        <div className={class_name} onClick={() => store.changeMonth(month_order + 1)}>
+          <span>{getMonth(month_order)}</span>
+        </div>
+      );
+    };
+
+    console.log(store.startDayOfMonth);
+
 
     return (
       <div className={classes.container}>
@@ -181,93 +313,26 @@ export const Calendar: FC<CalendarProps> = observer(
             <span>{store.date.getDate()}</span>
           </div>
           <div>
-            <span>{store.date.getMonth() + 1}</span>
+            <span>{store.date.getMonth() + 1} {getMonth(store.date.getMonth())}</span>
           </div>
           <div>
-            <span>{store.date.getFullYear()}</span>
+            <span>{store.date.getFullYear()} год</span>
           </div>
         </div>
 
         <div className={classes.year} ref={refs.year_ref}>
           <YearDivPrevious/>
-          <YearDiv year={startYear}/>
-          <YearDiv year={startYear + 1}/>
-          <YearDiv year={startYear + 2}/>
-          <YearDiv year={startYear + 3}/>
-          <YearDiv year={startYear + 4}/>
+          {generate(5).map(v => <YearDiv year={startYear + v}/>)}
           <YearDivNext/>
         </div>
 
-        <div className={classes.month_select}>
-          <div><span>Январь</span></div>
-          <div><span>Февраль</span></div>
-          <div><span>Март</span></div>
-          <div><span>Апрель</span></div>
-          <div><span>Май</span></div>
-          <div><span>Июнь</span></div>
-          <div><span>Июль</span></div>
-          <div><span>Август</span></div>
-          <div><span>Сентябрь</span></div>
-          <div><span>Октябрь</span></div>
-          <div><span>Ноябрь</span></div>
-          <div><span>Декабрь</span></div>
-       
+        <div className={classes.month}>
+          {generate(12).map(v => <MonthDiv month_order={v}/>)}
         </div>
 
-
-        <div className={classes.day_select}>
-          <div>
-            <div><span>1</span></div>
-            <div><span>2</span></div>
-            <div><span>3</span></div>
-            <div><span>4</span></div>
-            <div><span>5</span></div>
-            <div><span>6</span></div>
-            <div><span>7</span></div>
-          </div>
-
-          <div>
-            <div><span>8</span></div>
-            <div><span>9</span></div>
-            <div><span>10</span></div>
-            <div><span>11</span></div>
-            <div><span>12</span></div>
-            <div><span>13</span></div>
-            <div><span>14</span></div>
-          </div>
-
-          <div>
-            <div><span>15</span></div>
-            <div><span>16</span></div>
-            <div><span>17</span></div>
-            <div><span>18</span></div>
-            <div><span>19</span></div>
-            <div><span>20</span></div>
-            <div><span>21</span></div>
-          </div>
-
-          <div>
-            <div><span>22</span></div>
-            <div><span>23</span></div>
-            <div><span>24</span></div>
-            <div><span>25</span></div>
-            <div><span>26</span></div>
-            <div><span>27</span></div>
-            <div><span>28</span></div>
-          </div>
-
-          <div>
-            <div><span>29</span></div>
-            <div><span>30</span></div>
-            <div><span>31</span></div>
-            <div><span>1</span></div>
-            <div><span>2</span></div>
-            <div><span>3</span></div>
-            <div><span>4</span></div>
-          </div>
+        <DaySelector store={store}/>
 
 
-        </div>
       </div>
     );
   }

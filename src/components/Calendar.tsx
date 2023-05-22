@@ -65,9 +65,6 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   const DayDiv: FC<{day: number}> = ({ day }) => 
   {
     const class_name = day == store.date.getDate()? classes.day_select : '';
-    console.log(store.date.getDate());
-      
-    console.log(day == store.date.getDate());
     
     return (
       <div className={class_name} onClick={() => store.changeDay(day)}>
@@ -118,7 +115,8 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
       <Week start_day={7 - store.startDayWeekOfMonth + 1}/>
       <Week start_day={2 * 7 - store.startDayWeekOfMonth + 1}/>
       <Week start_day={3 * 7 - store.startDayWeekOfMonth + 1}/>
-      <FirstAndLastWeek start_day={4 * 7 - store.startDayWeekOfMonth + 1} count_days_of_month={store.countDayOfMonth}/>
+      {store.countOfDisplayWeeks == 6? <Week start_day={4 * 7 - store.startDayWeekOfMonth + 1}/>: <></>}
+      <FirstAndLastWeek start_day={(store.countOfDisplayWeeks - 1) * 7 - store.startDayWeekOfMonth + 1} count_days_of_month={store.countDayOfMonth}/>
     
     </div>
   );

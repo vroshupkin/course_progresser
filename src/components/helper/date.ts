@@ -1,6 +1,7 @@
+import { integral } from '../../common/math/integral';
 
 
-const isLeapYear = (year: number | Date) => 
+export const isLeapYear = (year: number | Date) => 
 {
   if(year instanceof Date) 
   {
@@ -32,6 +33,7 @@ export const month_helper =
   ru: [ 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь' ],
   en: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
   count_of_days: [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ],
+  
 
   getName(order: number, lang = 'ru')
   {
@@ -56,39 +58,46 @@ export const month_helper =
     return this.count_of_days[order];
   },
 
-
+  
   getStartWeekOfMonth(date: Date)
   {
     const firstDay = new Date(`${date.getFullYear()}-${date.getMonth() + 1}-01`);
-  
+    if(firstDay.getDay() == 0)
+    {
+      return 6;
+    }
+    
     return firstDay.getDay() - 1;
   },
 
   getPrevMonth(date: Date)
   {
-    const prev_month = (date.getMonth() - 1) % 11;
+    const month = date.getMonth();
+    let prev_month;
+    if(month == 0)
+    {
+      prev_month = 11;
+    }
+    else
+    {
+      prev_month = month - 1;
+    }
+    
     
     return new Date(`${date.getFullYear()}-${prev_month + 1}-01`);
+  },
+
+  orderDayOfMonth(date: Date)
+  {
+    const days = sum_of_day_of_month[date.getMonth()];
+    
+    return days + (isLeapYear(date)? 1 : 0);
   }
 
       
 };
 
 
-// type TTimeUnit = 'ms' | 's' | 'min' | 'hour' | 'day';
-
-
-// class TimeUnit
-// {   
-//   private value: number;
-//   private type: TTimeUnit;
-  
-  
-//   constructor(value: number, type: TTimeUnit = 's')
-//   {
-//     this.value = value;
-//     this.type = type;
-//   }
-  
-
-// }
+export const sum_of_day_of_month = integral(
+  [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
+);

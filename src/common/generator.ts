@@ -4,9 +4,9 @@
     @example generate(3, 6) => [3, 5]
 */
 
-export const generate = (a: number, b: number | null = null) => 
+export const generate = (a: number, b?: number) => 
 {
-  if(b == null)
+  if(b === undefined)
   {
     b = a;
     a = 0;

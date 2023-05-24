@@ -4,8 +4,8 @@ import { createUseStyles } from 'react-jss';
 import { CalcStore, TimeConverter } from '../components/TimeConverter';
 import { InputNameStore, Timer, TimerStore } from '../components/Timer';
 import { Navigate } from 'react-router-dom';
-import { Calendar } from '../components/Calendar';
-import { CalendarStore } from '../components/stores/Calendar.store';
+import { Calendar } from '../components/Calendar/Calendar';
+import { CalendarStore } from '../components/Calendar/Calendar.store';
 
 
 export const Timers: FC<{store: null}> = observer(({ store }) => 

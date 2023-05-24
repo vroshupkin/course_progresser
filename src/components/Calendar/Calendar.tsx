@@ -4,10 +4,13 @@ import {
   createRef,
   FC,
   useState,
+  createContext
 } from 'react';
 import { createUseStyles } from 'react-jss';
-import { CalendarStore } from './stores/Calendar.store';
-import { generate } from '../common/generator';
+import { CalendarStore } from './Calendar.store';
+import { generate } from '../../common/generator';
+import { Colors } from './Calendar.style';
+import { CalendarClasses } from './Calendar.style';
 
 
 const getMonth = (order: number) => 
@@ -26,6 +29,8 @@ const text_center_style =
 };
 
     
+const SelectDayContext = createContext<number | null>(null);
+
 const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) => 
 {   
   const classes = createUseStyles({
@@ -36,7 +41,6 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
         display: 'flex',
         justifyContent: 'center',
         userSelect: 'none',
-          
           
         '& div': {
           height: '12px',
@@ -54,69 +58,115 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
       }
     },
 
-    day_select:{
-      background: '#1A6400',
-      color: 'white'
-    }
-      
      
   })();
 
-  const DayDiv: FC<{day: number}> = ({ day }) => 
+  const DayDiv: FC<{day: number}> = observer(({ day }) => 
   {
-    const class_name = day == store.date.getDate()? classes.day_select : '';
+    const class_name = day == store.date.getDate()? CalendarClasses.day_select : '';
+    const click = () => store.changeDay(day);
     
     return (
-      <div className={class_name} onClick={() => store.changeDay(day)}>
+      <div className={class_name} onClick={click}>
+        <span>{day}</span>
+      </div>
+    );
+  });
+
+  const NotSelectableDay: FC<{day: number}> = ({ day }) =>
+  {
+    return (
+      <div className={CalendarClasses.day_not_selectable}>
         <span>{day}</span>
       </div>
     );
   };
 
-  const FirstAndLastWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
+  /**
+   * @param props.start_day uint[1...31] первый день недели 
+   * @param props.count_days_of_month uint[1...31] количество дней в данном месяце
+   * @returns 
+   */
+  const LastWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
   {
-    const days = [ start_day ];
-    while(days.length < 7)
-    {
-      const day = days[days.length - 1] + 1;
 
-      let next_day = day % (count_days_of_month + 1);
-      
-      if(next_day == 0)
-      {
-        next_day = 1;
-      }
-      days.push(next_day);
-    }
+    const days = [ 
+      start_day,
+      start_day + 1,
+      start_day + 2,
+      start_day + 3,
+      start_day + 4,
+      start_day + 5,
+      start_day + 6,
+    ]
+      .map(day => (day - 1) % count_days_of_month)
+      .map(day => day += 1);
 
     return(
       <div>
-        {days.map(v => <DayDiv day={v}/>)}
+        {days.map(v => v >= 1 && v <= 7? 
+          <NotSelectableDay day={v}/>:
+          <DayDiv day={v}/>
+        )
+      
+        }
       </div>
     ); 
     
   };
 
+  const FirstWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
+  {
+    const days = [ 
+      start_day,
+      start_day + 1,
+      start_day + 2,
+      start_day + 3,
+      start_day + 4,
+      start_day + 5,
+      start_day + 6,
+    ]
+      .map(day => (day - 1) % count_days_of_month)
+      .map(day => day += 1);
+
+    return(
+      <div>
+        {days.map(v => v <= 7?
+          <DayDiv day={v}/>:
+          <NotSelectableDay day={v}/>
+        )}
+        
+      </div>
+    ); 
+  };
+
   const Week: FC<{start_day: number}> = ({ start_day }) => 
   {
-
     return(
       <div>
         {generate(start_day, start_day + 7).map(v => <DayDiv day={v}/>)}
       </div>
     ); 
-    
+  };
+
+  const Weeks = () => 
+  {
+    return (
+      <>
+        <Week start_day={7 - store.startDayWeekOfMonth + 1}/>
+        <Week start_day={2 * 7 - store.startDayWeekOfMonth + 1}/>
+        <Week start_day={3 * 7 - store.startDayWeekOfMonth + 1}/>
+        {store.countOfDisplayWeeks == 6? <Week start_day={4 * 7 - store.startDayWeekOfMonth + 1}/>: <></>}
+      </>
+    );
   };
 
   return (
    
     <div className={classes.day}>
-      <FirstAndLastWeek start_day={store.firstDay} count_days_of_month={store.countDayOfPrevMonths}/>
-      <Week start_day={7 - store.startDayWeekOfMonth + 1}/>
-      <Week start_day={2 * 7 - store.startDayWeekOfMonth + 1}/>
-      <Week start_day={3 * 7 - store.startDayWeekOfMonth + 1}/>
-      {store.countOfDisplayWeeks == 6? <Week start_day={4 * 7 - store.startDayWeekOfMonth + 1}/>: <></>}
-      <FirstAndLastWeek start_day={(store.countOfDisplayWeeks - 1) * 7 - store.startDayWeekOfMonth + 1} count_days_of_month={store.countDayOfMonth}/>
+      <FirstWeek start_day={store.firstDay} count_days_of_month={store.countDayOfPrevMonths}/>
+      <Weeks/>
+      <LastWeek start_day={(store.countOfDisplayWeeks - 1) * 7 - store.startDayWeekOfMonth + 1} count_days_of_month={store.countDayOfMonth}/>
     
     </div>
   );
@@ -300,38 +350,37 @@ export const Calendar: FC<CalendarProps> = observer(
       );
     };
 
-    console.log(store.startDayOfMonth);
-
-
     return (
-      <div className={classes.container}>
+      <SelectDayContext.Provider value={store.date.getDay()}>
+        <div className={classes.container}>
 
-        <div className={classes.date}>
-          <div>
-            <span>{store.date.getDate()}</span>
+          <div className={classes.date}>
+            <div>
+              <span>{store.date.getDate()}</span>
+            </div>
+            <div>
+              <span>{store.date.getMonth() + 1} {getMonth(store.date.getMonth())}</span>
+            </div>
+            <div>
+              <span>{store.date.getFullYear()} год</span>
+            </div>
           </div>
-          <div>
-            <span>{store.date.getMonth() + 1} {getMonth(store.date.getMonth())}</span>
+
+          <div className={classes.year} ref={refs.year_ref}>
+            <YearDivPrevious/>
+            {generate(5).map(v => <YearDiv year={startYear + v}/>)}
+            <YearDivNext/>
           </div>
-          <div>
-            <span>{store.date.getFullYear()} год</span>
+
+          <div className={classes.month}>
+            {generate(12).map(v => <MonthDiv month_order={v}/>)}
           </div>
+
+          <DaySelector store={store}/>
+
+
         </div>
-
-        <div className={classes.year} ref={refs.year_ref}>
-          <YearDivPrevious/>
-          {generate(5).map(v => <YearDiv year={startYear + v}/>)}
-          <YearDivNext/>
-        </div>
-
-        <div className={classes.month}>
-          {generate(12).map(v => <MonthDiv month_order={v}/>)}
-        </div>
-
-        <DaySelector store={store}/>
-
-
-      </div>
+      </SelectDayContext.Provider>
     );
   }
 );

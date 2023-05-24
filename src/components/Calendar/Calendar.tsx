@@ -9,7 +9,7 @@ import {
 import { createUseStyles } from 'react-jss';
 import { CalendarStore } from './Calendar.store';
 import { generate } from '../../common/generator';
-import { Colors } from './Calendar.style';
+import { Colors, CalendarSizes, CalendarStyles } from './Calendar.style';
 import { CalendarClasses } from './Calendar.style';
 
 
@@ -20,13 +20,6 @@ const getMonth = (order: number) =>
 interface CalendarProps {
   store: CalendarStore;
 }
-
-const text_center_style = 
-{
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
 
     
 const SelectDayContext = createContext<number | null>(null);
@@ -43,11 +36,10 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
         userSelect: 'none',
           
         '& div': {
-          height: '12px',
-          width: '44px',
+          ...CalendarSizes.day_div,
+          ...CalendarStyles.text_center,
           cursor: 'pointer',
-          ...text_center_style,
-
+          
           '&:hover': {
             background: 'white',
             color: 'black'
@@ -61,9 +53,11 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
      
   })();
 
+  const calendar_classes = CalendarClasses();
+  
   const DayDiv: FC<{day: number}> = observer(({ day }) => 
   {
-    const class_name = day == store.date.getDate()? CalendarClasses.day_select : '';
+    const class_name = day == store.date.getDate()? calendar_classes.day_select : '';
     const click = () => store.changeDay(day);
     
     return (
@@ -76,7 +70,7 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   const NotSelectableDay: FC<{day: number}> = ({ day }) =>
   {
     return (
-      <div className={CalendarClasses.day_not_selectable}>
+      <div className={calendar_classes.day_not_selectable}>
         <span>{day}</span>
       </div>
     );
@@ -89,7 +83,6 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
    */
   const LastWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
   {
-
     const days = [ 
       start_day,
       start_day + 1,
@@ -105,10 +98,9 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
     return(
       <div>
         {days.map(v => v >= 1 && v <= 7? 
-          <NotSelectableDay day={v}/>:
-          <DayDiv day={v}/>
+          <NotSelectableDay day={v} key={v}/>:
+          <DayDiv day={v} key={v}/>
         )
-      
         }
       </div>
     ); 
@@ -132,8 +124,8 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
     return(
       <div>
         {days.map(v => v <= 7?
-          <DayDiv day={v}/>:
-          <NotSelectableDay day={v}/>
+          <DayDiv day={v} key={v}/>:
+          <NotSelectableDay day={v} key={v}/>
         )}
         
       </div>
@@ -144,7 +136,7 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   {
     return(
       <div>
-        {generate(start_day, start_day + 7).map(v => <DayDiv day={v}/>)}
+        {generate(start_day, start_day + 7).map(v => <DayDiv day={v} key={v}/>)}
       </div>
     ); 
   };
@@ -175,11 +167,10 @@ export const Calendar: FC<CalendarProps> = observer(
   ({ store }) => 
   {
 
-
+    
     const classes = createUseStyles({
       container:{
-        width: '380px',
-        height: '192px',
+        ...CalendarSizes.container,
         background: '#EBEBEB'
       },
 
@@ -192,7 +183,8 @@ export const Calendar: FC<CalendarProps> = observer(
         '& div': {
           height: '19px',
           background: '#1A6400',
-          ...text_center_style,
+          ...CalendarStyles.text_center,
+          
           userSelect: 'none',
           
         },
@@ -207,15 +199,14 @@ export const Calendar: FC<CalendarProps> = observer(
 
         
       },
-
+      
       year: {
         display: 'flex',
         justifyContent: 'center',
         marginBottom: '10px',
         '& div': {
-          width: '36px',
-          height: '20px',
-          ...text_center_style,
+          ...CalendarSizes.year_div,
+          ...CalendarStyles.text_center,
           cursor: 'pointer',
           userSelect: 'none',
           
@@ -260,7 +251,7 @@ export const Calendar: FC<CalendarProps> = observer(
           cursor: 'pointer',
           userSelect: 'none',
           
-          ...text_center_style,
+          ...CalendarStyles.text_center,
         }
         
       },
@@ -290,7 +281,7 @@ export const Calendar: FC<CalendarProps> = observer(
             height: '12px',
             width: '44px',
             cursor: 'pointer',
-            ...text_center_style,
+            ...CalendarStyles.text_center,
 
             '&:hover': {
               background: 'white',

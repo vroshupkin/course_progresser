@@ -1,6 +1,5 @@
 import { action, computed, makeObservable, observable } from 'mobx';
-import { isLeapYear, month_helper, sum_of_day_of_month } from '../../common/date';
-import { integral } from '../../common/math/integral';
+import { month_helper } from '../../common/date';
 
 export class CalendarStore 
 {
@@ -50,8 +49,6 @@ export class CalendarStore
   {
     const prev_month = month_helper.getPrevMonth(this.date);
 
-    console.log(prev_month);
-    
     return month_helper.getDays(prev_month);
   }
 
@@ -65,7 +62,6 @@ export class CalendarStore
   get firstDay()
   {
     const firstDayOfWeek = month_helper.getStartWeekOfMonth(this.date);
-    console.log(firstDayOfWeek);
     const prevMonth = month_helper.getPrevMonth(this.date);
     const countDayOfPrevMonth = month_helper.getDays(prevMonth);
 
@@ -95,12 +91,6 @@ export class CalendarStore
     return month_helper.amountDayOfMonth(this.date); 
   }
 
-  // @computed
-  // /** День от начала года */
-  // get orderWeekOfMonth()
-  // {
-  //   return month_helper.orderDayOfMonth(this.date); 
-  // }
 
 }
 

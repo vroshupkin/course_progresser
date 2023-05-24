@@ -92,7 +92,7 @@ export class CalendarStore
   /** День от начала года */
   get orderDayOfMonth()
   {
-    return month_helper.orderDayOfMonth(this.date); 
+    return month_helper.amountDayOfMonth(this.date); 
   }
 
   // @computed

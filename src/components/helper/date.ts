@@ -45,7 +45,10 @@ export const month_helper =
     return this.ru[order];
   },
 
-  // Возвращает колиество дней в месяце
+  /**
+   * @param date - Day in current month
+   * @returns  - uint[1...31] Return count of days in month 
+   */
   getDays(date: Date)
   {
     const order = date.getMonth();
@@ -59,6 +62,9 @@ export const month_helper =
   },
 
   
+  /**
+   * @returns - uint[0...6] Return day of week. Monday = 0, Sunday = 6
+   */
   getStartWeekOfMonth(date: Date)
   {
     const firstDay = new Date(`${date.getFullYear()}-${date.getMonth() + 1}-01`);
@@ -70,6 +76,10 @@ export const month_helper =
     return firstDay.getDay() - 1;
   },
 
+  /**
+   * @param date Date with current month
+   * @returns - uint[0...11] Return first day of previous month
+   */
   getPrevMonth(date: Date)
   {
     const month = date.getMonth();
@@ -87,11 +97,20 @@ export const month_helper =
     return new Date(`${date.getFullYear()}-${prev_month + 1}-01`);
   },
 
-  orderDayOfMonth(date: Date)
+  /**
+   * @param date Current date
+   * @returns uint[31...365] Сумма дней месяца, включая текущий месяц
+   */
+  amountDayOfMonth(date: Date)
   {
-    const days = sum_of_day_of_month[date.getMonth()];
+    let days = sum_of_day_of_month[date.getMonth()];
     
-    return days + (isLeapYear(date)? 1 : 0);
+    if(isLeapYear(date))
+    {
+      days += 1;
+    }
+    
+    return days;
   }
 
       

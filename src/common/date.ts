@@ -1,4 +1,4 @@
-import { integral } from '../../common/math/integral';
+import { integral } from './math/integral';
 
 
 export const isLeapYear = (year: number | Date) => 

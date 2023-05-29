@@ -6,9 +6,12 @@ export class CalendarStore
   @observable public date: Date;
     
 
-  constructor(date: Date) 
+  constructor(date?: Date) 
   {
-    
+    if(!date)
+    {
+      date = new Date(Date.now());
+    }
     this.date = date;
     makeObservable(this);
   }

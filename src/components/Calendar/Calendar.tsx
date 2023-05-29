@@ -18,11 +18,6 @@ const getMonth = (order: number) =>
   [ 'Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь' ][order];
 
 
-interface CalendarProps {
-  store: CalendarStore;
-}
-
-
 const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) => 
 {   
   const calendar_classes = CalendarClasses();
@@ -146,24 +141,6 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   );
 });
 
-export const Calendar: FC<CalendarProps> = observer(
-  ({ store }) => 
-  {
-
-    const calendar_classes = CalendarClasses();
-
-    return (
-      <div className={calendar_classes.main_container}>
-
-        <DateDisplay calendar_store={store}/>
-        <YearSelector store={store}/>
-        <MonthSelector store={store}/>
-        <DaySelector store={store}/>
-
-      </div>
-    );
-  }
-);
 
 const YearSelector: FC<{store: CalendarStore}> = observer(({ store }) => 
 {
@@ -289,3 +266,37 @@ const DateDisplay: FC<{calendar_store: CalendarStore}> = observer(({ calendar_st
 
   );
 });
+
+interface CalendarProps {
+  store?: CalendarStore;
+  onChange?(date: Date): void;
+  initDate?: Date
+}
+
+export const Calendar: FC<CalendarProps> = observer(
+  ({ store, onChange, initDate }) => 
+  {
+    const calendar_classes = CalendarClasses();
+
+    if(!store)
+    {
+      store = new CalendarStore(initDate);
+    }
+
+    if(onChange != undefined)
+    {
+      onChange(store.date);
+    }
+    
+    return (
+      <div className={calendar_classes.main_container}>
+
+        <DateDisplay calendar_store={store}/>
+        <YearSelector store={store}/>
+        <MonthSelector store={store}/>
+        <DaySelector store={store}/>
+
+      </div>
+    );
+  }
+);

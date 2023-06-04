@@ -13,27 +13,8 @@ import {  LINK } from './constants';
 import { userStore } from './components/stores/user.store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
+import { UserPage } from './pages/User/User.page';
 
-// const login_loader = ()  => 
-// {
-//   if(userStore.token == null)
-//   {
-//     throw redirect('/login');
-//   }
-
-//   return undefined
-// };
-
-// const router = createBrowserRouter(
-//   createRoutesFromElements(
-//     <Route path={'/'} element={<Login store={new LoginStore()} userStore={userStore}/>}>
-//       <Route path={'/login'} element={<Login store={new LoginStore()} userStore={userStore}/>}></Route>
-//       <Route path={'timers'} loader={() => 
-//    }} element={<Timers store={null}/>}/>
-//       <Route path={'income-bar'} element={<IncomeBarsPage a=''/>}/>
-//     </Route>
-//   )
-// );
 
 const storage = window.localStorage.setItem;
 
@@ -80,6 +61,8 @@ export const App = observer(() =>
         <Route path={'login'} element={<Login store={new LoginStore()} userStore={userStore}/>}/>
         <Route path={'timers'} element={<Timers store={null}/>}/>
         <Route path={'income-bars'} element={<IncomeBarsPage a=''/>}/>          
+
+        <Route path={'user'} element={<UserPage userStore={userStore}/>}/>          
       </Routes>
           
       {/* <div>

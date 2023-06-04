@@ -46,3 +46,55 @@ export const LoginContainerClasses = createUseStyles({
   }
 });
 
+export const LoginClasses = createUseStyles({
+  container:
+        {
+          
+          ...LoginSizes.container,
+          ...LoginCenterScreenStyle,
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignContent: 'center',
+
+          gap: '5px',
+          border: 'solid 1px',
+          borderRadius: '7px',
+          padding: '10px',
+          background: '#d4d4d4',
+        },
+  text: 
+    {
+      display: 'flex',
+      justifyContent: 'center',
+      '& span': {
+        fontSize: '20px',
+        fontWeight: 'bold'
+      }
+      
+    },
+
+  button:
+    {
+      background: 'white',
+      '&:hover': {
+        background: '#dbdbdb',
+        cursor: 'pointer'
+      },
+      height: '25px'
+    },
+
+  input:
+    {
+      height: '20px'
+    },
+
+  wrapper: 
+    {
+      display: 'flex',
+      justifyContent: 'center'
+    }
+
+});
+

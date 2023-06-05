@@ -14,7 +14,7 @@ import { userStore } from './components/stores/user.store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { UserPage } from './pages/User/User.page';
-
+import './index.css';
 
 const storage = window.localStorage.setItem;
 

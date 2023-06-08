@@ -12,9 +12,6 @@ const ConvertPx = (str: string, cb: (num: number) => number) =>
 const container_width = 400;
 const container_height = 200;
 
-const container_width_mobile = 100;
-const container_height_moblie = 75;
-
 
 export const LoginSizes = 
 {
@@ -47,16 +44,31 @@ export const LoginContainerClasses = createUseStyles({
 });
 
 export const LoginClasses = createUseStyles({
+  wrapper: 
+    {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: '100vh'
+    },
+
   container:
         {
-          
-          ...LoginSizes.container,
-          ...LoginCenterScreenStyle,
+
+          width: '50vw',
+          height: '200px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignContent: 'center',
+
+          position: 'relative',
+          
+          '@media (min-height: 300px)': {
+            top: '-20vh',
+          },
 
           gap: '5px',
           border: 'solid 1px',
@@ -89,12 +101,29 @@ export const LoginClasses = createUseStyles({
     {
       height: '20px'
     },
-
-  wrapper: 
-    {
-      display: 'flex',
-      justifyContent: 'center'
-    }
+  
 
 });
 
+export const StyleLoginRedSpan = createUseStyles({
+  container: {
+    height: '15px',
+    display: 'flex',
+    justifyContent: 'center',
+
+    '& span': {
+      fontSize: '16px',
+      fontWeight: '600',
+      color: '#ae0000'
+    }
+  },
+  
+  
+});
+
+export const LoginLoadingStyle = createUseStyles({
+  center: {
+    display: 'flex',
+    justifyContent: 'center'
+  }
+});

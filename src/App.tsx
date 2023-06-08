@@ -4,7 +4,9 @@ import { load } from 'webfontloader';
 import { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
 
-import { Login, LoginStore } from './pages/Login/Login.page';
+import { Login } from './pages/Login/Login.page';
+import { LoginStore } from './pages/Login/Login.store';
+
 import { Route, Router, Routes, createBrowserRouter, createRoutesFromElements, redirect } from 'react-router-dom';
 import { Timers } from './pages/Timer/Timers.page';
 import { IncomeBarsPage } from './pages/IncomeBars/IncomeBars.page';
@@ -56,9 +58,9 @@ export const App = observer(() =>
       
 
       <Routes>
-        <Route path={'/'} element={<Login store={new LoginStore()} userStore={userStore}/>}/>
+        <Route path={'/'} element={<Login loginStore={new LoginStore()} userStore={userStore}/>}/>
         
-        <Route path={'login'} element={<Login store={new LoginStore()} userStore={userStore}/>}/>
+        <Route path={'login'} element={<Login loginStore={new LoginStore()} userStore={userStore}/>}/>
         <Route path={'timers'} element={<Timers store={null}/>}/>
         <Route path={'income-bars'} element={<IncomeBarsPage a=''/>}/>          
 

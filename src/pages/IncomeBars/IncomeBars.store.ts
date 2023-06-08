@@ -1,5 +1,6 @@
 import { computed, makeObservable, observable } from 'mobx';
 
+// TODO вынести всю логику в компонент, а не в папку общих сторов
 export class IncomeBarStore 
 {
   @observable public revenue: number;

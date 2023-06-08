@@ -10,9 +10,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IncomeBarStore, IncomeBarStores } from './stores/IncomeBar.store';
-import { mergeObjects, TObject } from '../common/merge_json';
-import { IStyleDictionary } from '../common/layout_tools';
+import { IncomeBarStore, IncomeBarStores } from './IncomeBars.store';
+import { mergeObjects, TObject } from '../../common/merge_json';
+import { IStyleDictionary } from '../../common/layout_tools';
 import { createUseStyles } from 'react-jss';
 
 interface IncomeBarProps {

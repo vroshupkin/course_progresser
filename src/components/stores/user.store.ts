@@ -9,7 +9,8 @@ export class UserStore
 {
   token = null as null | string;
   isVerifyToken = false;
-  
+  // isLoading = false;
+
   constructor()
   {
     makeAutoObservable(this);      
@@ -34,10 +35,17 @@ export class UserStore
     
   }
 
+  /**
+   * Получает токен, записывает его в куки и меняет в текущем экземпляре
+   */
   async getToken(body: {userName: string, password: string})
   {
     const response = await post('/auth/signIn', body);
-    
+    if(response instanceof Error)
+    {
+      return response;
+    }
+
 
     if(response.ok === true)
     {
@@ -45,12 +53,9 @@ export class UserStore
       cookie.set('token', result.access_token);
       this.token = result.access_token;
     }
-    else
-    {
-      const error = await response.json();
-      
-      return error as {login_error: string, password_error: string};
-    }
+    
+
+    return response;
     
   }
 

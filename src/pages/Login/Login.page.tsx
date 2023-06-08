@@ -1,9 +1,9 @@
 
 import { observer } from 'mobx-react-lite';
-import { FC, RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { FC } from 'react';
 
-import { UserStore, userStore } from '../../components/stores/user.store';
-import { LoginClasses, StyleLoginRedSpan, LoginSizes, LoginLoadingStyle } from './Login.style';
+import { UserStore } from '../../components/stores/user.store';
+import { LoginClasses, StyleLoginRedSpan, LoginLoadingStyle } from './Login.style';
 import { Navigate } from 'react-router-dom';
 import { LoadAnimation } from '../../components/Loading/Loading';
 import { LoginStore } from './Login.store';
@@ -51,18 +51,7 @@ export const Login: FC<{loginStore: LoginStore, userStore: UserStore}> = observe
           <input  className={classes.input} onChange={loginStore.OnChangePassword} placeholder='Password' type='password'/>
           <button className={classes.button} onClick={loginStore.ClickEnter}>Войти</button>
         </div>
-
       
-        {/* <div>
-          <CenterPopup isDisplay={isDiplayCalendar}>
-            <Calendar onChange={(date) => 
-            {
-              // console.log(date);
-            }}/>
-          </CenterPopup>
-          <button onClick={() => setIsDisplayCalendar(!isDiplayCalendar)}>Click me</button>
-        </div> */}
-
       
       </div>
   );

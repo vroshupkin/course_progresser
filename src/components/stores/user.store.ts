@@ -9,25 +9,25 @@ export class UserStore
 {
   token = null as null | string;
   // isVerifyToken = false;
+  userName = '';
 
   constructor()
   {
     makeAutoObservable(this);      
   }
-
-
+  
   async verifyToken()
   {
-    const cookie_token = cookie.get('token');
-    
-    if(cookie_token != this.token)
+    const cookie_token = cookie.get('token'); 
+    if(!cookie_token)
     {
       this.token = null;
       
-      return;
+      return null;
     }
+    
 
-
+    // TODO сделать дебоунс
     const response = await api.get('/users/check_user');
 
     if(response instanceof Response)
@@ -38,7 +38,9 @@ export class UserStore
       }
     }
     
+    this.token = cookie_token;
     
+    return this.token;
   }
   
   setToken(token: null | string)
@@ -49,7 +51,7 @@ export class UserStore
   /**
    * Получает токен, записывает его в куки и меняет в текущем экземпляре
    */
-  async getToken(body: {userName: string, password: string})
+  async receiveToken(body: {userName: string, password: string})
   {
     const response = await api.post('/auth/signIn', body);
     if(response instanceof Error)
@@ -63,6 +65,8 @@ export class UserStore
       const result = await response.json();
       cookie.set('token', result.access_token);
       this.token = result.access_token;
+
+      this.userName = body.userName;
     }
     
 

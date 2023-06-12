@@ -47,7 +47,7 @@ export class LoginStore
     };
     
     this.isLoading = true;
-    const response = await userStore.getToken(dto);
+    const response = await userStore.receiveToken(dto);
     if(response instanceof Error)
     {
       this.login_error = response.message;

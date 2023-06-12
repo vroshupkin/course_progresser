@@ -1,52 +1,31 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, observable } from 'mobx';
 import Cookies from 'universal-cookie';
 import { api } from '../../api';
 
+const ONE_HOUR = 60 * 60;
 
 const cookie = new Cookies();
 
 export class UserStore
-{
-  token = null as null | string;
-  // isVerifyToken = false;
-  userName = '';
-
+{ 
   constructor()
   {
-    makeAutoObservable(this);      
+    makeAutoObservable(this, {
+      token: false,
+      userName: false
+    });      
   }
   
-  async verifyToken()
+  get token()
   {
-    const cookie_token = cookie.get('token'); 
-    if(!cookie_token)
-    {
-      this.token = null;
-      
-      return null;
-    }
-    
-
-    // TODO сделать дебоунс
-    const response = await api.get('/users/check_user');
-
-    if(response instanceof Response)
-    {
-      if(response.status === 401)
-      {
-        this.token = null;
-      }
-    }
-    
-    this.token = cookie_token;
-    
-    return this.token;
+    return cookie.get('token'); 
   }
-  
-  setToken(token: null | string)
+
+  set token(token: string)
   {
-    this.token = token;
+    cookie.set('token', token, { maxAge: ONE_HOUR }); 
   }
+
 
   /**
    * Получает токен, записывает его в куки и меняет в текущем экземпляре
@@ -63,17 +42,19 @@ export class UserStore
     if(response.ok === true)
     {
       const result = await response.json();
-      cookie.set('token', result.access_token);
-      this.token = result.access_token;
-
-      this.userName = body.userName;
+      cookie.set('token', result.access_token, { maxAge: ONE_HOUR });
+      cookie.set('userName', body.userName, { maxAge: ONE_HOUR });
     }
     
 
     return response;
-    
   }
 
+  get userName()
+  {
+    return cookie.get('userName');
+    
+  }
   // TODO сделать refreshToken
   // async updateToken()
   // {

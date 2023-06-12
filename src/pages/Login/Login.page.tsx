@@ -1,6 +1,6 @@
 
 import { observer } from 'mobx-react-lite';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 import { UserStore } from '../../components/stores/user.store';
 import { LoginClasses, StyleLoginRedSpan, LoginLoadingStyle } from './Login.style';
@@ -26,8 +26,13 @@ export const Login: FC<{loginStore: LoginStore, userStore: UserStore}> = observe
   const classes = LoginClasses();
   const loading_style = LoginLoadingStyle();
 
+  useEffect(() => 
+  {
+    userStore.verifyToken(); 
+  }, [ userStore.token ]);
+  
   return(
-    userStore.isVerifyToken? <Navigate to='/user'/> :
+    userStore.token !== null? <Navigate to='/user'/> :
       <div className={classes.wrapper} >
         
         <div className={classes.container} >

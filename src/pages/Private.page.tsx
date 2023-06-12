@@ -11,9 +11,9 @@ export const PrivatePage: FC<{children: ReactNode}> = observer(({ children } ) =
   {
     userStore.verifyToken();
   });
-
+  
   return(
-    userStore.isVerifyToken === false? 
+    userStore.token === null? 
       <Navigate to="/login"/>:
       <>{ children }</>
   );

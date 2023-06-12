@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import Cookies from 'universal-cookie';
-import { post } from '../../api';
+import { api } from '../../api';
 
 
 const cookie = new Cookies();
@@ -8,8 +8,7 @@ const cookie = new Cookies();
 export class UserStore
 {
   token = null as null | string;
-  isVerifyToken = false;
-  // isLoading = false;
+  // isVerifyToken = false;
 
   constructor()
   {
@@ -17,22 +16,34 @@ export class UserStore
   }
 
 
-  verifyToken()
+  async verifyToken()
   {
     const cookie_token = cookie.get('token');
     
-    if(!cookie_token)
+    if(cookie_token != this.token)
     {
-      this.isVerifyToken = false;
+      this.token = null;
       
       return;
     }
 
-    this.token = cookie.get('token');
+
+    const response = await api.get('/users/check_user');
+
+    if(response instanceof Response)
+    {
+      if(response.status === 401)
+      {
+        this.token = null;
+      }
+    }
     
-    this.isVerifyToken = true;
     
-    
+  }
+  
+  setToken(token: null | string)
+  {
+    this.token = token;
   }
 
   /**
@@ -40,7 +51,7 @@ export class UserStore
    */
   async getToken(body: {userName: string, password: string})
   {
-    const response = await post('/auth/signIn', body);
+    const response = await api.post('/auth/signIn', body);
     if(response instanceof Error)
     {
       return response;
@@ -59,10 +70,11 @@ export class UserStore
     
   }
 
-  async updateToken()
-  {
-    await fetch(process.env.REACT_APP_BACKEND_URL_DEV, { method: 'post' });
-  }
+  // TODO сделать refreshToken
+  // async updateToken()
+  // {
+  //   await fetch(process.env.REACT_APP_BACKEND_URL_DEV, { method: 'post' });
+  // }
 
 }
 

@@ -75,9 +75,6 @@ export class LoginStore
 
     this.isLoading = false;
     
-
-    userStore.verifyToken();
-    
     
   };
 

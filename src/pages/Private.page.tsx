@@ -7,13 +7,9 @@ import Cookies from 'universal-cookie';
 export const PrivatePage: FC<{children: ReactNode}> = observer(({ children } ) => 
 {
   
-  useEffect(() => 
-  {
-    userStore.verifyToken();
-  });
-  
+
   return(
-    userStore.token === null? 
+    !userStore.token? 
       <Navigate to="/login"/>:
       <>{ children }</>
   );

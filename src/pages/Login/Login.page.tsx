@@ -26,13 +26,9 @@ export const Login: FC<{loginStore: LoginStore, userStore: UserStore}> = observe
   const classes = LoginClasses();
   const loading_style = LoginLoadingStyle();
 
-  useEffect(() => 
-  {
-    userStore.verifyToken(); 
-  }, [ userStore.token ]);
   
   return(
-    userStore.token !== null? <Navigate to='/user'/> :
+    userStore.token? <Navigate to='/user'/> :
       <div className={classes.wrapper} >
         
         <div className={classes.container} >

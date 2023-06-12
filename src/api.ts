@@ -5,6 +5,24 @@ import Mime from 'mime/Mime';
 
 const cookie = new Cookie();
 
+function clearToken(response: Response)
+{ 
+  console.log(response.status);
+  
+  if(response.status === 401)
+  {
+    userStore.token = '';
+  }
+}
+
+const AuthorizationHeader = 
+{
+  get Authorization()
+  {
+    return `Bearer ${userStore.token? userStore.token: ''}`;
+  }
+};
+
 
 // Example POST method implementation:
 async function post(url = '', body = {}, content_type = 'application/json') 
@@ -17,8 +35,7 @@ async function post(url = '', body = {}, content_type = 'application/json')
   const headers: HeadersInit = 
   {
     'Content-Type': content_type,
-    'Authorization': `Bearer ${userStore.token !== null? userStore.token: ''}`
-        
+    ...AuthorizationHeader
   };
 
   
@@ -39,28 +56,26 @@ async function post(url = '', body = {}, content_type = 'application/json')
   }
   catch(e)
   {
-    
-    
     return e as Error;
   }
+  
+  clearToken(response);
   
   return response; // parses JSON response into native JavaScript objects
 }
 
 export async function get(url = '') 
 {
-    
   url = REACT_APP_BACKEND_URL_DEV + url;
   
-  let response: Response;
-
   const headers: HeadersInit = 
   {
-    // 'Content-Type': content_type,
-    'Authorization': `Bearer ${userStore.token !== null? userStore.token: ''}`
+    ...AuthorizationHeader
   };
 
-  
+  let response: Response;
+
+  console.log(url);
   try
   {
     response =  await fetch(url, {
@@ -77,8 +92,13 @@ export async function get(url = '')
   }
   catch(e)
   {
+    
+    
     return e as Error;
   }
+  
+  
+  clearToken(response);
   
   return response; // parses JSON response into native JavaScript objects
 }
@@ -90,7 +110,7 @@ const upload_file = async(url = '', body: FormData) =>
 
   const headers: HeadersInit = 
   {
-    'Authorization': `Bearer ${userStore.token !== null? userStore.token: ''}`,
+    ...AuthorizationHeader
     // 'Content-Type': `multipart/form-data`
   };
 
@@ -120,13 +140,9 @@ const upload_file = async(url = '', body: FormData) =>
     return e as Error;
   }
   
-  if(response.status === 401 && response.statusText === 'Unauthorized')
-  {
-    userStore.setToken(null);
-    console.log(userStore.token);
-  }
+  clearToken(response);
   
-  console.log(response);
+  // console.log(response);
   
   return response; // parses JSON response into native JavaScript objects
   

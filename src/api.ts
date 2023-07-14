@@ -5,14 +5,11 @@ import Mime from 'mime/Mime';
 
 const cookie = new Cookie();
 
-function clearToken(response: Response)
+function clearToken()
 { 
-  console.log(response.status);
-  
-  if(response.status === 401)
-  {
-    userStore.token = '';
-  }
+  userStore.token = '';
+  // cookie.remove('token');
+  // cookie.remove('userName');
 }
 
 const AuthorizationHeader = 
@@ -52,14 +49,16 @@ async function post(url = '', body = {}, content_type = 'application/json')
       referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(body), // body data type must match "Content-Type" header
     });
-  
+    
   }
   catch(e)
   {
+    
+    console.log(e);
+
     return e as Error;
   }
   
-  clearToken(response);
   
   return response; // parses JSON response into native JavaScript objects
 }
@@ -92,13 +91,13 @@ export async function get(url = '')
   }
   catch(e)
   {
-    
+    console.log(e);
     
     return e as Error;
   }
   
   
-  clearToken(response);
+  // clearToken();
   
   return response; // parses JSON response into native JavaScript objects
 }
@@ -140,7 +139,6 @@ const upload_file = async(url = '', body: FormData) =>
     return e as Error;
   }
   
-  clearToken(response);
   
   // console.log(response);
   

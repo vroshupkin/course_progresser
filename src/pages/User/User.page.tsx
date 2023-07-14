@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { observer } from 'mobx-react-lite';
 import { UserStore, userStore } from '../../components/stores/user.store';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
@@ -6,6 +7,7 @@ import { PrivatePage } from '../Private.page';
 
 import user_default_png from './../../assets/user-default.png';
 import { api } from '../../api';
+import { get_avatar } from './User.controllers';
 
 
 const Tittle: FC<{children: string}> = ({ children }) => 
@@ -27,46 +29,51 @@ export const UserPage: FC<{userStore: UserStore}> = observer(() =>
 
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const get_image = async() => 
+  const fullfied_url = async() => 
   {
-    const res = await api.get(`/users/get-avatar/${userStore.userName}`);
-
-    if(res instanceof Response)
+    if(imageRef.current)
     {
-      if(imageRef.current)
+      const res = await get_avatar(userStore.userName);
+      if(typeof(res) === 'string')
       {
-        imageRef.current.src = URL.createObjectURL(await res.blob());
+        imageRef.current.src = res;
       }
+      else
+      {
+        imageRef.current.src = '';
+      }
+      
     }
   };
 
-
   useEffect(() => 
   {
-    get_image();
+    get_avatar(userStore.userName).then(fullfied_url);
+    
   }, []);
 
-  const handler_file_select = (e: React.ChangeEvent<HTMLInputElement>) => 
+
+  /**
+   * Обработчик выбора файла
+   */
+  const async_handler_file_select = async(e: React.ChangeEvent<HTMLInputElement>) => 
   {
     const formData = new FormData();
 
     if(e.target.files)
     {
       formData.append('file', e.target.files[0]);      
-      
-      
       formData.append('userName', userStore.userName);
 
-      api.upload_file('/users/upload-avatar', formData)
-        .then(() => 
-        {
-          get_image();
-        });
+      await api.upload_file('/users/upload-avatar', formData);
+      await get_avatar(userStore.userName);
+      await fullfied_url();
+
+
     }
     
     
   };
-
   
   return(
     <PrivatePage>
@@ -76,7 +83,7 @@ export const UserPage: FC<{userStore: UserStore}> = observer(() =>
           <img className={styles.image} ref={imageRef} src={user_default_png}/>
         </div>
 
-        <input type="file" accept="image/png, image/jpeg" onChange={handler_file_select}/>
+        <input type="file" accept="image/png, image/jpeg" onChange={async_handler_file_select}/>
         {/* {isValidFile && <button onClick={e => }>Загрузить автар</button>} */}
         
         <Tittle>Login</Tittle>

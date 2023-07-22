@@ -116,17 +116,18 @@ const upload_file = async(url = '', body: FormData) =>
 
   let response: Response;
 
+  console.log('start fetch');
   try
   {
     response =  await fetch(url, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
+      // mode: 'cors', // no-cors, *cors, same-origin
+      // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      // credentials: 'same-origin', // include, *same-origin, omit
       headers: headers,
 
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      // redirect: 'follow', // manual, *follow, error
+      // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: body, // body data type must match "Content-Type" header
     });
     
@@ -139,8 +140,6 @@ const upload_file = async(url = '', body: FormData) =>
     return e as Error;
   }
   
-  
-  // console.log(response);
   
   return response; // parses JSON response into native JavaScript objects
   

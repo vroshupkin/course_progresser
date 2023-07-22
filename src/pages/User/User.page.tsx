@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { observer } from 'mobx-react-lite';
 import { UserStore, userStore } from '../../components/stores/user.store';
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
-import { UserPageClasses, UserPageStyleTittle } from './User.style';
+import { ChangeEventHandler, FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { ComponentImageSelectorStyle, UserPageClasses, UserPageStyleTittle } from './User.style';
 import { PrivatePage } from '../Private.page';
 
 import user_default_png from './../../assets/user-default.png';
 import { api } from '../../api';
-import { get_avatar } from './User.controllers';
+import { load_avatar as load_avatar_img } from './User.controllers';
+import { makeAutoObservable } from 'mobx';
 
 
 const Tittle: FC<{children: string}> = ({ children }) => 
@@ -22,18 +23,94 @@ const Tittle: FC<{children: string}> = ({ children }) =>
 
 };
 
+
+class ImageSelectorStore
+{
+  imageUrl = '';
+
+  constructor()
+  {
+    makeAutoObservable(this);
+    this.load_avatar();
+  }
+
+  async load_avatar()
+  {
+    const url = await load_avatar_img(userStore.userName);
+    this.imageUrl = url === ''? user_default_png : url;
+  }
+
+  // Загружает аватар на сервер и загружает его с сервера
+  async selectImage(file: File)
+  {
+    const formData = new FormData();
+    formData.append('file', file);      
+    formData.append('userName', userStore.userName);
+
+    await api.upload_file('/users/upload-avatar', formData);
+    this.imageUrl = await load_avatar_img(userStore.userName);
+  }
+}
+
+const ImageSelector: FC<{children?: string, image_selector_store: ImageSelectorStore}> = ({ children, image_selector_store }) => 
+{
+  useEffect(() => 
+  {
+    image_selector_store.load_avatar();
+  }, []);
+  
+  const container_class = ComponentImageSelectorStyle();
+
+  
+  const selectFile = (e: React.ChangeEvent<HTMLInputElement>) => 
+  {
+    if(e.target.files)
+    {
+      image_selector_store.selectImage(e.target.files[0]);
+    }  
+  };
+  
+  return(
+    <div style={{ position: 'relative' }} className={container_class.container}>
+      <span>Выберите файл</span>
+      {/* BUG [low] Сам файловый инпут остается, просто становится прозрачным */}
+      <input type="file" accept="image/png, image/jpeg" onChange={selectFile} 
+        style={{ opacity: '0.0', position: 'absolute', width: '100%', height: '100%', cursor: 'pointer' }}
+      />
+    </div>
+    
+  );
+};
+
+
+const image_selector_store = new ImageSelectorStore();
+
+const AvatarImage: FC<{image_selector_store: ImageSelectorStore}> = observer(() => 
+{
+  {
+    const styles = UserPageClasses();
+
+    return(
+      <div >
+        <img className={styles.image} src={image_selector_store.imageUrl}/>
+      </div>
+    );
+
+  }
+});
+
 export const UserPage: FC<{userStore: UserStore}> = observer(() => 
 {
 
   const styles = UserPageClasses();
-
+  
   const imageRef = useRef<HTMLImageElement>(null);
 
   const fullfied_url = async() => 
   {
     if(imageRef.current)
     {
-      const res = await get_avatar(userStore.userName);
+      const res = await load_avatar_img(userStore.userName);
       if(typeof(res) === 'string')
       {
         imageRef.current.src = res;
@@ -48,7 +125,7 @@ export const UserPage: FC<{userStore: UserStore}> = observer(() =>
 
   useEffect(() => 
   {
-    get_avatar(userStore.userName).then(fullfied_url);
+    load_avatar_img(userStore.userName).then(fullfied_url);
     
   }, []);
 
@@ -66,27 +143,39 @@ export const UserPage: FC<{userStore: UserStore}> = observer(() =>
       formData.append('userName', userStore.userName);
 
       await api.upload_file('/users/upload-avatar', formData);
-      await get_avatar(userStore.userName);
+      await load_avatar_img(userStore.userName);
       await fullfied_url();
-
-
     }
-    
     
   };
   
   return(
     <PrivatePage>
       {/* <div className={classes.container}> */}
-      <div >
-        <div>
-          <img className={styles.image} ref={imageRef} src={user_default_png}/>
-        </div>
+      <div>
+        <AvatarImage image_selector_store={image_selector_store}/>
+        <ImageSelector image_selector_store={image_selector_store}/>
 
-        <input type="file" accept="image/png, image/jpeg" onChange={async_handler_file_select}/>
-        {/* {isValidFile && <button onClick={e => }>Загрузить автар</button>} */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+          <div style={{ display: 'flex', gap: '30px' }}>
+            <Tittle>Login</Tittle>
+            <Tittle>{userStore.userName}</Tittle>
+          </div>
+
+          <div style={{ display: 'flex', gap: '30px' }}>
+            <Tittle>Email</Tittle>
+            <Tittle>TODO@email.com</Tittle>
+          </div>
+
+          <div style={{ display: 'flex', gap: '30px' }}>
+            <Tittle>Telegram chat id</Tittle>
+            <Tittle>Login</Tittle>
+          </div>
+
+        </div>
         
-        <Tittle>Login</Tittle>
+
         <div>2</div>
         <div>3</div>
         <div>4</div>

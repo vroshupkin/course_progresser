@@ -1,6 +1,9 @@
 import { api } from '../../api';
 
-export const get_avatar = async(userName: string) => 
+/**
+ * Download from backend image and create url this object
+ */
+export const load_avatar = async(userName: string) => 
 {
   const res = await api.get(`/users/get-avatar_${userName}`);
 
@@ -10,7 +13,7 @@ export const get_avatar = async(userName: string) =>
   }
   else
   {
-    return res;
+    return '';
   }
 };
 

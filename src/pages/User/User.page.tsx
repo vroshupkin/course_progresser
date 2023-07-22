@@ -52,15 +52,12 @@ class ImageSelectorStore
   }
 }
 
-const ImageSelector: FC<{children?: string, image_selector_store: ImageSelectorStore}> = ({ children, image_selector_store }) => 
+const ImageSelector: FC<{children?: string, image_selector_store: ImageSelectorStore, containerClass: string}> = ({ children, image_selector_store, containerClass }) => 
 {
   useEffect(() => 
   {
     image_selector_store.load_avatar();
   }, []);
-  
-  const container_class = ComponentImageSelectorStyle();
-
   
   const selectFile = (e: React.ChangeEvent<HTMLInputElement>) => 
   {
@@ -71,9 +68,9 @@ const ImageSelector: FC<{children?: string, image_selector_store: ImageSelectorS
   };
   
   return(
-    <div style={{ position: 'relative' }} className={container_class.container}>
+    <div  className={containerClass}>
       <span>Выберите файл</span>
-      {/* BUG [low] Сам файловый инпут остается, просто становится прозрачным */}
+      {/* BUG [low] Изменить ui. В текущей реализи инпут остается, просто становится прозрачным, и остается без курсора пальца */}
       <input type="file" accept="image/png, image/jpeg" onChange={selectFile} 
         style={{ opacity: '0.0', position: 'absolute', width: '100%', height: '100%', cursor: 'pointer' }}
       />
@@ -154,7 +151,7 @@ export const UserPage: FC<{userStore: UserStore}> = observer(() =>
       {/* <div className={classes.container}> */}
       <div>
         <AvatarImage image_selector_store={image_selector_store}/>
-        <ImageSelector image_selector_store={image_selector_store}/>
+        <ImageSelector image_selector_store={image_selector_store} containerClass={ComponentImageSelectorStyle().container}/>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 

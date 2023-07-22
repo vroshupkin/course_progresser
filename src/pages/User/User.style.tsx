@@ -18,6 +18,8 @@ export const UserPageClasses = createUseStyles({
 
 export const ComponentImageSelectorStyle = createUseStyles({
   container: {
+    position: 'relative',
+    marginBottom: '10px',
     width: '324px',
     height: '50px',
     display: 'flex',

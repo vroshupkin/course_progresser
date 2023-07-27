@@ -35,6 +35,11 @@ export const month_helper =
   count_of_days: [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ],
   
 
+  /**
+   * Берет месяц по порядку
+   * @param order Порядок месяца начиная с 0
+   * @param lang ru | en
+   */
   getName(order: number, lang = 'ru')
   {
     if(lang == 'en')
@@ -46,6 +51,7 @@ export const month_helper =
   },
 
   /**
+   * Return the numbers days in month
    * @param date - Day in current month
    * @returns  - uint[1...31] Return count of days in month 
    */
@@ -93,7 +99,6 @@ export const month_helper =
       prev_month = month - 1;
     }
     
-    
     return new Date(`${date.getFullYear()}-${prev_month + 1}-01`);
   },
 
@@ -120,3 +125,31 @@ export const month_helper =
 export const sum_of_day_of_month = integral(
   [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
 );
+
+
+/** 
+ * Переводит дату на value вперед у экземпляра класса 
+ * immutablecp[yq]
+ */ 
+export const changeDays = (date: Date, value: number) => 
+{ 
+  date = copyDate(date);
+  date.setDate(date.getDate() + value); 
+  
+  return date;
+};
+
+/**
+ * Copy date instance
+ */
+export const copyDate = (date: Date) => new Date(date.getTime());
+
+/**
+ * Это один день?
+ */
+export const equailtyDay = (d_1: Date, d_2: Date) =>   
+  d_1.getFullYear() === d_2.getFullYear() &&
+  d_1.getMonth() === d_2.getMonth() &&
+  d_1.getDate() === d_2.getDate();
+
+  

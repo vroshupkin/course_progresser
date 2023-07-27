@@ -29,3 +29,12 @@ export function viewNumber(num: number, amountDigitAfterPoint: number): string
 
   return `${num}`.slice(0, pointIndex + amountDigitAfterPoint);
 }
+
+/**
+ * Выводит целочисленное рандомное число в диапазоне [min, max]
+ * @returns 
+ */
+export function getRandomInt(min: number, max: number): number 
+{
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}

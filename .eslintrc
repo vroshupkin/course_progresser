@@ -29,7 +29,8 @@
 		"object-curly-spacing": ["error", "always"],
 		"array-bracket-spacing": ["error", "always"],
 		"no-unreachable": "error",
-		"no-empty": ["error", {"allowEmptyCatch": true}]
+		"no-empty": ["error", {"allowEmptyCatch": true}],
+		"@typescript-eslint/ban-ts-comment": "off"
 	},
 
 	"env": {

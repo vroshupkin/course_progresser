@@ -24,5 +24,9 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+   "config-overrides.js",
+   "*.test.ts"
   ]
 }

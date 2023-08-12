@@ -4,7 +4,7 @@ import { FC, useRef, useState } from 'react';
 import { ProcentStore } from './stores/ProcentStore.store';
 import CSS from 'csstype';
 import { Div } from '../common/htmlRef';
-import { viewNumber } from '../common/number';
+import { viewNumber } from '../common/number.helper';
 import { Dictionary } from '../common/dictionary.interface.';
 import { Procent } from '../common/procent';
 import { step_10, TCourseVideosTuple } from '../data/purpleSchoolNodeJS';

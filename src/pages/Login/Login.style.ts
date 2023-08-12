@@ -14,7 +14,6 @@ export const LoginClasses = createUseStyles({
 
   container:
         {
-
           width: '50vw',
           height: '200px',
           boxSizing: 'border-box',

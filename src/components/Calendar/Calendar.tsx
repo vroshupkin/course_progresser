@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { createUseStyles } from 'react-jss';
 import { CalendarStore } from './Calendar.store';
-import { generate } from '../../common/generator';
+import { range } from '../../common/generator';
 import { Colors, CalendarSizes, CalendarStyles, CalendarMonth, CalendarDisplayDateClasses } from './Calendar.style';
 import { CalendarClasses } from './Calendar.style';
 import { add_class, class_selector, toggle_class } from '../../common/class_helper';
@@ -113,7 +113,7 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   {
     return(
       <div className={calendar_classes.flex_element_row}>
-        {generate(start_day, start_day + 7).map(v => <DayDiv day={v} key={v}/>)}
+        {range(start_day, start_day + 7).map(v => <DayDiv day={v} key={v}/>)}
       </div>
     ); 
   };

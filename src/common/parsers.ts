@@ -30,6 +30,11 @@ export const TimeParser = (str: string): number =>
   return sum;
 }; 
 
+/**
+ * Переводит время в секундах в формат hh:mm:ss
+ * @param seconds 
+ * @returns 
+ */
 export const SecondsTo_hh_mm_ss = (seconds: number): string => 
 {
   const hours = Math.floor(seconds/3600);

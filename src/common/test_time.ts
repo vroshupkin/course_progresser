@@ -1,6 +1,10 @@
 
 
-// Считает время исполнения функции
+/**
+ * Высчитывает за сколько времени исполнится функция n раз
+ * @param n Количество раз исполнения
+ * @returns Время исполнение в формате Date
+ */
 export const test_time = (n: number) => (func: (...input: any) => any) =>(input: any[]) =>
 {
   const start = new Date();

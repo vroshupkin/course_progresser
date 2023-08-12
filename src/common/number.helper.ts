@@ -34,7 +34,7 @@ export function viewNumber(num: number, amountDigitAfterPoint: number): string
  * Выводит целочисленное рандомное число в диапазоне [min, max]
  * @returns 
  */
-export function getRandomInt(min: number, max: number): number 
+export function randomInt(min: number, max: number): number 
 {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }

@@ -1,3 +1,4 @@
+// WHY?
 export class Procent 
 {
   static getValue(procent: number, min: number, max: number): number 

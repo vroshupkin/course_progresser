@@ -9,6 +9,10 @@
 		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/recommended"
 	],
+	"ignorePatterns": [
+		"config-overrides.js",
+		"tailwind.config.js"
+	],
 	"rules": {
 		"@typescript-eslint/ban-types": "off",
 		"@typescript-eslint/no-unused-vars": [

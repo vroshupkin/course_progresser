@@ -22,36 +22,12 @@ const storage = window.localStorage.setItem;
 
 const leftMenuStore = new LeftMenuStore();
 
-
 export const App = observer(() =>
 {
-
-  useEffect(() => 
-  {
-    load({
-      google: {
-        families: [ 'Anonymous Pro' ],
-      },
-    });
-  }, []);
-
-  const classes = createUseStyles({
-    container: {
-      '& *':{
-        fontFamily: 'Anonymous Pro',
-        fontSize: '12px'
-      },
-      display: 'flex',
-      
-      
-    },
-
-  })();
-  
   
   return (
     
-    <div className={classes.container}>
+    <div className={'helveticaNeueCyr flex'}>
       <div>
         <LeftMenu store={leftMenuStore}/>
       </div>
@@ -59,11 +35,9 @@ export const App = observer(() =>
 
       <Routes>
         <Route path={'/'} element={<Login loginStore={new LoginStore()} userStore={userStore}/>}/>
-        
         <Route path={'login'} element={<Login loginStore={new LoginStore()} userStore={userStore}/>}/>
         <Route path={'timers'} element={<Timers store={null}/>}/>
         <Route path={'income-bars'} element={<IncomeBarsPage a=''/>}/>          
-
         <Route path={'user'} element={<UserPage userStore={userStore}/>}/>          
       </Routes>
           

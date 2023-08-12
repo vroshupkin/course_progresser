@@ -2,3 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'HelveticaNeueCyr';
+    src: 
+        url('/src/assets/fonts/HelveticaNeueCyr/helveticaneuecyr_roman.otf') font-weight-normal,
+        url('/src/assets/fonts/HelveticaNeueCyr/helveticaneuecyr_black.otf') font-weight-bold
+        ;
+
+    
+}
+
+@font-face {
+    font-family: 'AnonymousPro';
+    src:
+        url('/src/assets/fonts/Anonymous_Pro/AnonymousPro-BoldItalic.ttf') font-weight-bold font-italic, 
+        url('/src/assets/fonts/Anonymous_Pro/AnonymousPro-Bold.ttf') font-weight-bold,
+        url('/src/assets/fonts/Anonymous_Pro/AnonymousPro-Italic.ttf') font-italic,
+        url('/src/assets/fonts/Anonymous_Pro/AnonymousPro-Regular.ttf') font-weight-normal
+}
+.anonymous-pro {
+    font-family: 'AnonymousPro';
+}
+
+.helvetica-neue-cyr{
+    font-family: 'HelveticaNeueCyr'
+}

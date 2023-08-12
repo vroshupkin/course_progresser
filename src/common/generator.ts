@@ -1,24 +1,15 @@
 
-/**  Генерирует массив от [a, b) с шагом 1
-    @example generate(5) => [0, 1, 2, 3, 4]
-    @example generate(3, 6) => [3, 5]
-*/
 
-export const generate = (a: number, b?: number) => 
+/**
+ * @example range(6) => [0, 1, 2, 3, 4, 5]; range(2, 6) => [2, 3, 4, 5]
+ */
+export const range = (start: number, end?: number) => 
 {
-  if(b === undefined)
+  if(end === undefined)
   {
-    b = a;
-    a = 0;
+    end = start;
+    start = 0;
   }
-    
-  const output: number[] = [];
-  while(a < b)
-  {
-    output.push(a);
-    a++;
-  }
-
-  return output;
+  
+  return new Array(end- start).fill(0).map((_, i) => i + start);  
 };
-

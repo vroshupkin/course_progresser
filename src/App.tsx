@@ -10,8 +10,7 @@ import { LoginStore } from './pages/Login/Login.store';
 import { Route, Router, Routes, createBrowserRouter, createRoutesFromElements, redirect } from 'react-router-dom';
 import { Timers } from './pages/Timer/Timers.page';
 import { IncomeBarsPage } from './pages/IncomeBars/IncomeBars.page';
-import { LeftMenu, LeftMenuStore } from './components/LeftMenu';
-import {  LINK } from './constants';
+import { LeftMenu } from './components/LeftMenu';
 import { userStore } from './components/stores/user.store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -20,7 +19,6 @@ import './index.css';
 
 const storage = window.localStorage.setItem;
 
-const leftMenuStore = new LeftMenuStore();
 
 export const App = observer(() =>
 {
@@ -29,7 +27,7 @@ export const App = observer(() =>
     
     <div className={'helveticaNeueCyr flex'}>
       <div>
-        <LeftMenu store={leftMenuStore}/>
+        <LeftMenu/>
       </div>
       
 

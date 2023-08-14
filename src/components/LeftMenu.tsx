@@ -1,7 +1,7 @@
 import { createUseStyles } from 'react-jss';
 import { makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { FC, useRef } from 'react';
+import { FC, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaClock } from 'react-icons/fa';
 import {  BsGraphUp } from 'react-icons/bs';
@@ -9,92 +9,22 @@ import {  BsGraphUp } from 'react-icons/bs';
 import { IconBaseProps, IconType } from 'react-icons/lib';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
+type TRoute = '/user' | '/timers' | '/income-bars'
 
-interface ILeftMenuRow{
-    link: '/user' | '/timers' | '/income-bars'
+interface IconAndLinkProps{
+    link: TRoute
     description: string,
-    icon: IconType
+    icon: IconType,
+    isSelect?: true,
+    showDescription: boolean
 }
 
 
-const guestLinks: ILeftMenuRow[] = 
-[
-  { 
-    link: '/user',
-    description: 'Пользователь',
-    icon: FaUser
-  }
-];
-
-const userLinks: ILeftMenuRow[] = 
-[
-  ...guestLinks,
-  {
-    link: '/timers',
-    description: 'Таймеры',
-    icon: FaClock
-  },
-  {
-    link: '/income-bars',
-    description: 'Графики',
-    icon: BsGraphUp
-  }
-];
-
-
-const iconFactory = (icon: IconType) => (props: IconBaseProps) => 
+const IconAndLink = (props: IconAndLinkProps) => 
 {
+  
   const classes = createUseStyles({
-    container: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignContent: 'center',
-      '& svg': {
-        display: 'block'
-      }
-    }
-  })();
 
-  return(
-    <div className={classes.container} >
-      {icon(props)}
-    </div>
-  );
-};
-    
-export class LeftMenuStore
-{
-  activeTabLink: ILeftMenuRow['link'] = '/user';
-    
-  constructor()
-  {
-    makeAutoObservable(this);
-  }
-
-  setActiveTab(active_link: ILeftMenuRow['link'])
-  {
-    this.activeTabLink = active_link;
-  }
-}
-
-export const LeftMenu: FC<{store: LeftMenuStore}> = observer(({ store }) => 
-{
-
-  const classes = createUseStyles({
-    containter:{
-      display: 'flex',
-      flexDirection: 'column',
-      '& *': {
-        fontSize: '18px'
-      },
-      marginRight: '5px'
-
-      
-    },
-    active: {
-      background: 'lime',
-    },
-    
     iconAndLink: {
       display: 'flex',
       alignContent: 'center',
@@ -126,66 +56,52 @@ export const LeftMenu: FC<{store: LeftMenuStore}> = observer(({ store }) =>
       }
     },
 
-    hamburger_class: {
-      cursor: 'pointer'
-    }
 
   })();
 
-  const IconAndLink = (obj: ILeftMenuRow) => 
-  {
-    const container = useRef<HTMLDivElement>(null);
-
-
-    container.current?.classList.remove(classes.active);
-    if(obj.link === store.activeTabLink)
-    {
-      container.current?.classList.add(classes.active);
-    }
-    
-    const Icon = iconFactory(obj.icon);
-    
-    const clickToLink = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
-    {
-      store.setActiveTab(obj.link);
-    };
+  const Icon = iconFactory(props.icon);
     
     
-    return(
-      <div onClick={clickToLink} className={classes.iconAndLink} ref={container}>
-
-        <Link to={obj.link} draggable={false}>
-          <Icon/>
-          <div>
-            <span>{obj.description}</span>
-          </div>
-        </Link>
-
-      </div>
-      
-    );
-  };
+  return(
+    <div className={classes.iconAndLink}>
+      <Link to={props.link} draggable={false}>
+        <Icon/>
+        {
+          props.showDescription && <span>{props.description}</span>
+        }
+      </Link>
+    </div>
+  );
+};
 
 
-  const containter = useRef<HTMLDivElement>(null);
+const iconFactory = (icon: IconType) => (props: IconBaseProps) => 
+{
+  return(
+    <div className={'flex justify-center content-center'} >
+      {icon(props)}
+    </div>
+  );
+};
+    
 
-  const HamburgerIcon = iconFactory(GiHamburgerMenu);
-  const hamburgerOnClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => 
-  {
-    containter.current?.classList.contains(classes.hideLinks)?
-      containter.current?.classList.remove(classes.hideLinks):
-      containter.current?.classList.add(classes.hideLinks);
-  };
-  
+export const LeftMenu = () => 
+{
+  const [ showDescription, setShowDescrption ] = useState<boolean>(true);
+   
   return (
-    <div className={classes.containter} ref={containter}>
-      <div className={classes.iconAndLink} onClick={hamburgerOnClick}>
-        <HamburgerIcon  className={classes.hamburger_class}/>      
+    <div className={'flex flex-col mr-[5px] text-[18px]'}>
+      <div className={'hover:bg-[#a0ffa0] h-[27px]'} onClick={() => setShowDescrption(!showDescription)}>
+        <GiHamburgerMenu className='cursor-pointer h-[30px] w-[30px]'/>
       </div>
       
       <div>
-        {userLinks.map(row_obj => IconAndLink(row_obj))}
+        <IconAndLink link='/user' description='Пользователь' icon={FaUser} showDescription={showDescription}/>
+        <IconAndLink link='/timers' description='Таймеры' icon={FaClock} showDescription={showDescription}/>
+        <IconAndLink link='/income-bars' description='Графики' icon={BsGraphUp} showDescription={showDescription}/>
+        
       </div>
     </div>
   );
-});
+};
+

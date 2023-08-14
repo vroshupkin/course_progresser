@@ -1,5 +1,4 @@
 import { createUseStyles } from 'react-jss';
-import { LINK } from '../constants';
 import { makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FC, useRef } from 'react';
@@ -10,8 +9,9 @@ import {  BsGraphUp } from 'react-icons/bs';
 import { IconBaseProps, IconType } from 'react-icons/lib';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
+
 interface ILeftMenuRow{
-    link: (typeof LINK)[keyof typeof LINK],
+    link: '/user' | '/timers' | '/income-bars'
     description: string,
     icon: IconType
 }
@@ -20,7 +20,7 @@ interface ILeftMenuRow{
 const guestLinks: ILeftMenuRow[] = 
 [
   { 
-    link: LINK.USER,
+    link: '/user',
     description: 'Пользователь',
     icon: FaUser
   }
@@ -30,12 +30,12 @@ const userLinks: ILeftMenuRow[] =
 [
   ...guestLinks,
   {
-    link: LINK.TIMERS,
+    link: '/timers',
     description: 'Таймеры',
     icon: FaClock
   },
   {
-    link: LINK.INCOME_BARS,
+    link: '/income-bars',
     description: 'Графики',
     icon: BsGraphUp
   }
@@ -56,7 +56,7 @@ const iconFactory = (icon: IconType) => (props: IconBaseProps) =>
   })();
 
   return(
-    <div className={classes.container}>
+    <div className={classes.container} >
       {icon(props)}
     </div>
   );
@@ -64,7 +64,7 @@ const iconFactory = (icon: IconType) => (props: IconBaseProps) =>
     
 export class LeftMenuStore
 {
-  activeTabLink: ILeftMenuRow['link'] = LINK.USER;
+  activeTabLink: ILeftMenuRow['link'] = '/user';
     
   constructor()
   {

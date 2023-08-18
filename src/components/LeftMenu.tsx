@@ -1,7 +1,4 @@
-import { createUseStyles } from 'react-jss';
-import { makeAutoObservable } from 'mobx';
-import { observer } from 'mobx-react-lite';
-import { FC, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaClock } from 'react-icons/fa';
 import {  BsGraphUp } from 'react-icons/bs';
@@ -20,54 +17,18 @@ interface IconAndLinkProps{
 }
 
 
-const IconAndLink = (props: IconAndLinkProps) => 
+const IconAndLink = ({ link, description, icon, showDescription, isSelect }: IconAndLinkProps) => 
 {
-  
-  const classes = createUseStyles({
 
-    iconAndLink: {
-      display: 'flex',
-      alignContent: 'center',
-      cursor: 'pointer',
-
-      '&:hover': {
-        background: '#a0ffa0'
-      },
-      '& svg': {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '30px',
-        height: '30px',
-
-      },
-      '& a': {
-        display: 'flex',
-        alignItems: 'center',
-        height: '35px',
-        textDecoration: 'none',
-        width: '100%',
-      }
-    },
-
-    hideLinks: {
-      '& span': {
-        display: 'none'
-      }
-    },
-
-
-  })();
-
-  const Icon = iconFactory(props.icon);
+  const Icon = iconFactory(icon);
     
-    
+
   return(
-    <div className={classes.iconAndLink}>
-      <Link to={props.link} draggable={false}>
-        <Icon/>
+    <div className={'hover:bg-[#eee] cursor-pointer flex content-center'}>
+      <Link className={'w-[100%] h-[35px] flex content-center '} to={link} draggable={false}>
+        <Icon className={'w-[30px] h-[30px]'}/>
         {
-          props.showDescription && <span>{props.description}</span>
+          showDescription && <span>{description}</span>
         }
       </Link>
     </div>
@@ -91,7 +52,7 @@ export const LeftMenu = () =>
    
   return (
     <div className={'flex flex-col mr-[5px] text-[18px]'}>
-      <div className={'hover:bg-[#a0ffa0] h-[27px]'} onClick={() => setShowDescrption(!showDescription)}>
+      <div className={'hover:bg-lime h-[27px]'} onClick={() => setShowDescrption(!showDescription)}>
         <GiHamburgerMenu className='cursor-pointer h-[30px] w-[30px]'/>
       </div>
       

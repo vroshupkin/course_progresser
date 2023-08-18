@@ -1,4 +1,4 @@
-import { DateHelper } from '../../common/date.helper';
+import { DateHelper } from '../../common/date_helper/date.helper';
 import { range } from '../../common/generator';
 import { randomInt } from '../../common/number.helper';
 

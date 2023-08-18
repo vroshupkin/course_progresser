@@ -9,7 +9,7 @@ import {  BsGraphUp } from 'react-icons/bs';
 import { IconBaseProps, IconType } from 'react-icons/lib';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
-type TRoute = '/user' | '/timers' | '/income-bars'
+type TRoute = '/user' | '/timers' | '/income-bars' | '/calories-graph'
 
 interface IconAndLinkProps{
     link: TRoute
@@ -99,6 +99,7 @@ export const LeftMenu = () =>
         <IconAndLink link='/user' description='Пользователь' icon={FaUser} showDescription={showDescription}/>
         <IconAndLink link='/timers' description='Таймеры' icon={FaClock} showDescription={showDescription}/>
         <IconAndLink link='/income-bars' description='Графики' icon={BsGraphUp} showDescription={showDescription}/>
+        <IconAndLink link='/calories-graph' description='График калорий' icon={BsGraphUp} showDescription={showDescription}/>
         
       </div>
     </div>

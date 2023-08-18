@@ -10,7 +10,7 @@ import { Arrow } from './components/Arrow';
 import { getOrderInSiblings } from '../../common/dom_helper/getOrderInSiblings';
 
 
-export const MainChart = () => 
+export const CalorieGraphPage = () => 
 {
   const [ startDay, setStartDay ] = useState(new Date());
   const [ selectDay, setSelectDay ] = useState(new Date());

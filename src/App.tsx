@@ -1,8 +1,4 @@
 
-import { load } from 'webfontloader';
-
-import { useEffect } from 'react';
-import { createUseStyles } from 'react-jss';
 
 import { Login } from './pages/Login/Login.page';
 import { LoginStore } from './pages/Login/Login.store';
@@ -15,7 +11,10 @@ import { userStore } from './components/stores/user.store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { UserPage } from './pages/User/User.page';
+
+
 import './index.css';
+import { CalorieGraphPage } from './pages/CaloriesGraph/CaloriesGraph.page';
 
 const storage = window.localStorage.setItem;
 
@@ -37,6 +36,8 @@ export const App = observer(() =>
         <Route path={'timers'} element={<Timers store={null}/>}/>
         <Route path={'income-bars'} element={<IncomeBarsPage a=''/>}/>          
         <Route path={'user'} element={<UserPage userStore={userStore}/>}/>          
+        
+        <Route path={'calories-graph'} element={<CalorieGraphPage/>}/>          
       </Routes>
           
       {/* <div>

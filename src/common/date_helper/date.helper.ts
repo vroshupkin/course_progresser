@@ -1,4 +1,4 @@
-import { integral } from './math/integral';
+import { integral } from '../math/integral';
 
 
 enum IN_MS{
@@ -25,28 +25,9 @@ export const MONTH_NAME = {
 
 export const isLeapYear = (year: number | Date) => 
 {
-  if(year instanceof Date) 
-  {
-    year = year.getFullYear();
-  }
+  year = year instanceof Date ? year.getFullYear(): year;
   
-  if(year % 100 === 0)
-  {
-    if(year % 400 == 0)
-    {
-      return true;
-    }
-    
-    return false;
-  }
-    
-  if(year % 4 == 0)
-  {
-    return true;
-  }
-  
-  return false;
-
+  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
 };
 
 

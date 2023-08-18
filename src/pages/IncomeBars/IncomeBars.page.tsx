@@ -11,13 +11,14 @@ import { Navigate, redirect } from 'react-router-dom';
 import { PrivatePage } from '../Private.page';
 import { makeAutoObservable } from 'mobx';
 import { Properties as CSSProperties } from 'csstype';
-import { TCaloriesData } from './Calories.data';
+import { TCaloriesData } from '../CaloriesGraph/Calories.data';
 import { DateHelper, MONTH_NAME, WEEK, copyDate, equailtyDay } from '../../common/date_helper/date.helper';
-import { caloriesData } from './Calories.data';
+import { caloriesData } from '../CaloriesGraph/Calories.data';
 import { applyStyle } from '../../common/css.helper';
 import { range } from '../../common/generator';
 
 import { Arrow } from '../CaloriesGraph/components/Arrow';
+import { getOrderInSiblings } from '../../common/dom_helper/getOrderInSiblings';
 
 
 const income_bar_store = new IncomeBarStore(100, 80);
@@ -90,11 +91,6 @@ const graphWeekSelector_class = createUseStyles(
     }
   }
 );
-
-
-const Colors = {
-  blue_1: '#21BEEF'
-};
 
 
 const graphWeekSelectorCell = createUseStyles(
@@ -503,28 +499,4 @@ const ChartTittles = (props: ChartTittlesProps) =>
 
 // const date_now = new Date();
 // const week = range(7).map(v => DateHelper.changeDays(copyDate(date_now), v));
-
-
-/**
- * HTML DOM 
- * Возвращает порядок элемента относительно его саблингов
- */
-const getOrderInSiblings  = (elem: HTMLElement) => 
-{
-  const parent = elem.parentNode;
-
-  if(parent)
-  {
-    for(let i = 0; i < parent.children.length; i++)
-    {
-      if(elem === parent.children[i])
-      {
-        return i;
-      }
-    }
-  }
-
-  return -1;
-};
-
 

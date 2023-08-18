@@ -2,12 +2,12 @@ import { observer } from 'mobx-react-lite';
 import { CSSProperties, FC, useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { TCaloriesData, caloriesData } from './Calories.data';
-import { DateHelper, MONTH_NAME, WEEK, equailtyDay } from '../../common/date.helper';
+import { DateHelper, MONTH_NAME, WEEK, equailtyDay } from '../../common/date_helper/date.helper';
 import { makeAutoObservable } from 'mobx';
 import { range } from '../../common/generator';
-import { getOrderInSiblings } from '../IncomeBars/common';
 import { applyStyle } from '../../common/css.helper';
 import { Arrow } from './components/Arrow';
+import { getOrderInSiblings } from '../../common/dom_helper/getOrderInSiblings';
 
 
 export const MainChart = () => 

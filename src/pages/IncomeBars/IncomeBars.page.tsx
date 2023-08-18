@@ -12,7 +12,7 @@ import { PrivatePage } from '../Private.page';
 import { makeAutoObservable } from 'mobx';
 import { Properties as CSSProperties } from 'csstype';
 import { TCaloriesData } from './Calories.data';
-import { DateHelper, MONTH_NAME, WEEK, copyDate, equailtyDay } from '../../common/date.helper';
+import { DateHelper, MONTH_NAME, WEEK, copyDate, equailtyDay } from '../../common/date_helper/date.helper';
 import { caloriesData } from './Calories.data';
 import { applyStyle } from '../../common/css.helper';
 import { range } from '../../common/generator';

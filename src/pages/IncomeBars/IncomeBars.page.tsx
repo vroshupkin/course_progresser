@@ -16,6 +16,10 @@ import { DateHelper, MONTH_NAME, WEEK, copyDate, equailtyDay } from '../../commo
 import { caloriesData } from './Calories.data';
 import { applyStyle } from '../../common/css.helper';
 import { range } from '../../common/generator';
+
+import { Arrow } from '../CaloriesGraph/components/Arrow';
+
+
 const income_bar_store = new IncomeBarStore(100, 80);
 
 const income_bar_stores: IncomeBarStores = new IncomeBarStores(
@@ -91,29 +95,6 @@ const graphWeekSelector_class = createUseStyles(
 const Colors = {
   blue_1: '#21BEEF'
 };
-
-const arrowClassList = createUseStyles(
-  {
-    common: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '39px',
-      height: '29px',
-      cursor: 'pointer',
-      userSelect: 'none',
-
-      '&:hover': {
-        border: `1px solid ${Colors.blue_1}`
-      }
-
-    },
-
-    left: {
-      display: 'flex',
-    },
-  }
-);
 
 
 const graphWeekSelectorCell = createUseStyles(
@@ -205,22 +186,6 @@ class DaySelectorStore
 
 
 const daySelectorStore =  new DaySelectorStore();
-
-
-type arrowProps = {
-  type: '<' | '>',
-  onClick: React.MouseEventHandler<HTMLDivElement>
-}
-const Arrow = (props: arrowProps) => 
-{
-  const classList = arrowClassList();
- 
-  return(
-    <div className={classList.common} onClick={props.onClick}>
-      <span>{props.type}</span>
-    </div>
-  );
-};
 
 
 const MainChart = () => 

@@ -52,8 +52,8 @@ export const LeftMenu = () =>
    
   return (
     <div className={'flex flex-col mr-[5px] text-[18px]'}>
-      <div className={'hover:bg-lime h-[27px]'} onClick={() => setShowDescrption(!showDescription)}>
-        <GiHamburgerMenu className='cursor-pointer h-[30px] w-[30px]'/>
+      <div className={'h-[27px] hover:bg-[#eee]  cursor-pointer'} onClick={() => setShowDescrption(!showDescription)}>
+        <GiHamburgerMenu className='w-[30px] h-[30px] '/>
       </div>
       
       <div>

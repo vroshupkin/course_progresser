@@ -3,12 +3,12 @@ import { CSSProperties, FC, useEffect, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { TCaloriesData, caloriesData } from './Calories.data';
 import { DateHelper, MONTH_NAME, WEEK, equailtyDay } from '../../common/date_helper/date.helper';
-import { makeAutoObservable } from 'mobx';
 import { range } from '../../common/generator';
 import { applyStyle } from '../../common/css.helper';
 import { Arrow } from './components/Arrow';
 import { getOrderInSiblings } from '../../common/dom_helper/getOrderInSiblings';
-
+import './CaloriesGraph.page.css';
+import { DayCell } from './components/DayCell';
 
 export const CalorieGraphPage = () => 
 {
@@ -17,7 +17,7 @@ export const CalorieGraphPage = () =>
 
   
   return(
-    <div style={{ display: 'flex', flexDirection: 'column' }} className='helveticaNeueCyr'>
+    <div className='w-[100%] helveticaNeueCyr flex flex-col items-center'>
       <CaloriesChart calories={caloriesData} maxHeight={222}  maxValue={3000} numberOfDays={14} startDay={startDay}/>
       <DaySelector startDay={startDay} setStartDay={setStartDay} selectDay={selectDay} setSelectDay={setSelectDay} numberDays={14}/>
       <ShowSelectDay selectDay={selectDay}/>
@@ -31,7 +31,6 @@ export const CalorieGraphPage = () =>
  */
 export const DaySelector: FC<DaySelectorProps> = observer((props) => 
 {
-  const classList = graphWeekSelector_class();
   const ref_div = useRef<HTMLDivElement>(null);
 
   const [ selectDate, setSelectDate ] = [ props.selectDay, props.setSelectDay ];
@@ -42,7 +41,7 @@ export const DaySelector: FC<DaySelectorProps> = observer((props) =>
     setStartDay(DateHelper.changeDays(startDay, count));
 
   return(
-    <div className={classList.container} ref={ref_div}>
+    <div className={'flex'} ref={ref_div}>
 
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
         <Arrow type='<' onClick={changeStartDate(-1)}/>
@@ -55,10 +54,11 @@ export const DaySelector: FC<DaySelectorProps> = observer((props) =>
 );
 
 
-const CaloriesChart = (props: CaloriesChartProps) => 
+const CaloriesChart = ({ startDay, numberOfDays, calories, maxHeight, maxValue }: CaloriesChartProps) => 
 {
   const containerDivRef = useRef<null | HTMLDivElement>(null);
   
+  // TODO переписать под tailwind
   useEffect(() => 
   {
     const style: CSSProperties = {
@@ -74,21 +74,19 @@ const CaloriesChart = (props: CaloriesChartProps) =>
     }
     
   }, []);
-
-  const [ startDay, numberOfDays ] = [ props.startDay, props.numberOfDays ];
-
+  
   
   const createCaloriesMap = () => 
   {
     const daysFilterFn = (date: Date): Boolean => 
     {
-      const day_of_date = DateHelper.DateToDayOrder(date);
+      const day_of_select_day = DateHelper.DateToDayOrder(date);
       const day_of_start_day = DateHelper.DateToDayOrder(startDay);
       const day_of_last_day = DateHelper.DateToDayOrder(DateHelper.changeDays(startDay, numberOfDays - 1));
 
       return(
-        day_of_date >= day_of_start_day && 
-        day_of_date <= day_of_last_day
+        day_of_select_day >= day_of_start_day && 
+        day_of_select_day <= day_of_last_day
       );
     };
 
@@ -98,7 +96,7 @@ const CaloriesChart = (props: CaloriesChartProps) =>
       .map(val => DateHelper.changeDays(startDay, val))
       .forEach(date => calories_dict[DateHelper.DateToDayOrder(date)] = 0);
 
-    props.calories
+    calories
       .filter(data => daysFilterFn(data.date))
       .forEach(data => 
       {
@@ -114,6 +112,7 @@ const CaloriesChart = (props: CaloriesChartProps) =>
         
   };
   
+  
   return(
     <div ref={containerDivRef}>
       <div style={{ position: 'absolute' }}>
@@ -124,7 +123,7 @@ const CaloriesChart = (props: CaloriesChartProps) =>
         </svg>
       </div>
       
-      <div style={{ width: `${CELL_WIDTH.val}px` }}/>
+      <div/>
       {
         Object.entries(createCaloriesMap()).
           map(([ dayOrder, val ]) => 
@@ -133,92 +132,17 @@ const CaloriesChart = (props: CaloriesChartProps) =>
               
             return(
               <>
-                <CaloriesBar date={date} val={val} maxVal={props.maxValue} maxHeightPx={props.maxHeight}/>
+                <CaloriesBar date={date} val={val} maxVal={maxValue} maxHeightPx={maxHeight}/>
                 {date.getDay() === WEEK.Sunday && <div style={{ marginRight: '37px' }}></div>}
               </>
             );
           }
           )
-
       }
-     
-      
     </div>
     
   );
 };
-
-
-const graphWeekSelector_class = createUseStyles(
-  {
-    container: {
-      display: 'flex',
-    }
-  }
-);
-
-
-const graphWeekSelectorCell = createUseStyles(
-  {
-    common_1: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-
-      width: '37px',
-      height: '27px',
-      flexShrink: 0,
-
-      border: '1px solid #C4C4C4',
-      userSelect: 'none',
-      '&:hover': {
-        borderColor: '#21BEEF'
-      },
-
-    },
-
-    left: {
-      borderRadius: '5px 0px 0px 5px',
-    },
-
-    right: {
-      borderRadius: '0px 5px 5px 0px',
-      marginRight: '37px'
-    },
-
-    select: {
-      background: '#21BEEF',
-      color: 'white'
-    },
-
-    common: {
-
-    }
-      
-  }
-);
-
-
-type GraphWeekSelectorCellProps = {
-  type: 'left' | 'right' | 'common',
-  children: string | number,
-  select: boolean,
-  onClick?: React.MouseEventHandler<HTMLDivElement>
-}
-
-const DayCell: FC<GraphWeekSelectorCellProps> = observer((props) => 
-{
-  const classList = graphWeekSelectorCell();  
-  const classDiv =  `${classList.common_1} ${classList[props.type]} ${props.select? classList.select : ''}`;
-
-  return(
-    <div className={classDiv} onClick={props.onClick}>
-      <span>{props.children}</span>
-    </div>
-  );
-}
-);
 
 
 enum CELL_WIDTH {
@@ -264,32 +188,6 @@ type CaloriesChartProps = {
 }
 
 
-class DaySelectorStore
-{
-  // 1ый день на графике
-  firstDay = new Date();
-  selectedDay = new Date;
-
-  constructor()
-  {
-    makeAutoObservable(this);
-  }
-
-  setSelectDay(date: Date)
-  {
-    this.selectedDay = date;
-  }
-
-  setFirstDay(date: Date)
-  {
-    this.firstDay = date;
-  }
-}
-
-
-const daySelectorStore =  new DaySelectorStore();
-
-
 type DaySelectorProps = {
   startDay: Date,
   selectDay: Date,
@@ -319,9 +217,7 @@ type CaloriesBarProps =
 
 const CaloriesBar = (props: CaloriesBarProps) => 
 {
-  
   const divRef = useRef<HTMLDivElement | null>(null);
-  // const divContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => 
   {
@@ -359,7 +255,6 @@ const CaloriesBar = (props: CaloriesBarProps) =>
 
 const OneWeek = (props: OneWeekProps) => 
 {
-  const classList = graphWeekSelector_class();
 
   const days = 
     range(props.day_counts)
@@ -376,7 +271,7 @@ const OneWeek = (props: OneWeekProps) =>
   };
 
   return(
-    <div className={classList.container}>
+    <div className='flex'>
       {
         days
           .map((d, i) => 

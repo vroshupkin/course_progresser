@@ -1,0 +1,10 @@
+.left-div-cell{
+    border-radius: 5px 0px 0px 5px
+}
+
+.right-div-cell{
+    border-radius: 0px 5px 5px 0px;
+    margin-right: 37px
+}
+
+

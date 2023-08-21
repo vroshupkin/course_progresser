@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { DateHelper, WEEK, equailtyDay } from '../../../common/date_helper/date.helper';
 import { range } from '../../../common/generator';
 import { getOrderInSiblings } from '../../../common/dom_helper/getOrderInSiblings';
-import { DayCell } from './DayCell';
 
 type DaySelectorProps = {
   startDay: Date,
@@ -99,6 +98,33 @@ export const OneWeek = (props: OneWeekProps) =>
           )
       }
 
+    </div>
+  );
+};
+
+
+type GraphWeekSelectorCellProps = {
+  type: 'left' | 'right' | 'common',
+  children: string | number,
+  select: boolean,
+  onClick?: React.MouseEventHandler<HTMLDivElement>
+}
+
+const DayCell = ({ children, select, type, onClick }: GraphWeekSelectorCellProps) => 
+{
+  const specificClass = type === 'left'? ' left-div-cell' : type === 'right'? ' right-div-cell': '';
+  const selectClass = select? ' bg-c-blue text-[white]' : '';
+    
+  return(
+    <div className={
+      ' w-[37px] h-[27px]' + 
+        ' flex items-center justify-center cursor-pointer' + 
+        ' border-[1px] border-solid border-[#C4C4C4] hover:border-[#21BEEF] select-none'
+         + specificClass + selectClass
+    }
+    onClick={onClick}
+    >
+      <span>{children}</span>
     </div>
   );
 };

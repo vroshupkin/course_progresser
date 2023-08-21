@@ -17,7 +17,7 @@ export const ShowSelectDay = (props: {selectDay: Date}) =>
     <div className='flex flex-row text-[18px]'>
       <div className='font-[550] text-[#505359] mr-[140px]'>Сегодня</div>
       <div className='mr-[139px] text-[#838890]'>{getDateString(props.selectDay)}</div>
-      <div className=' text-[18px] font-[550] text-[#505359] flex flex-row gap-[15px] cursor-pointer'>
+      <div className=' text-[18px] font-[550] text-[#505359] flex flex-row gap-[15px] cursor-pointer select-none'>
         <div>Н</div>
         <div className='text-[#21BEEF]'>2Н</div>
         <div>М</div>

@@ -1,8 +1,9 @@
-import { CSSProperties, useEffect, useRef } from 'react';
+import { CSSProperties, FC, MutableRefObject, Ref, useEffect, useRef, useState } from 'react';
 import { DateHelper, MONTH_NAME, WEEK } from '../../../common/date_helper/date.helper';
 import { applyStyle } from '../../../common/css.helper';
 import { TCaloriesData } from '../Calories.data';
 import { range } from '../../../common/generator';
+import { HoverPopUpProps, useHoverPopUp } from '../../../hooks/useHoverPopUp';
 
 enum CELL_WIDTH {
   val = 37
@@ -118,42 +119,47 @@ type CaloriesBarProps =
 } 
 
 
-const CaloriesBar = (props: CaloriesBarProps) => 
+const CaloriesBar = ({ date, maxHeightPx, maxVal, val }: CaloriesBarProps) => 
 {
-  const divRef = useRef<HTMLDivElement | null>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => 
-  {
-    if(divRef.current)
-    {
-      const style: CSSProperties = {
-        backgroundColor: '#21BEEF',
-        borderRadius: '5px 5px 0px 0px',
-        marginBottom: '10px'
-      };
+  const { hide, pos } = useHoverPopUp(barRef);
 
-      applyStyle(divRef.current, style);
+  const height_in_px = maxHeightPx * val / maxVal;
 
-    }
-  }, []);
-
-  useEffect(() => 
-  {
-    if(divRef.current)
-    {
-      const height = props.maxHeightPx * props.val / props.maxVal;
-      divRef.current.style.height = height + 'px';
-    }
-
-
-  }, [ props.maxHeightPx, props.maxVal, props.val ]);
-
-  
   return(
-    <div className={'flex justify-center'} style={{ width: `${CELL_WIDTH.val}px` }}>
-      <div className={'w-[10px]'} ref={divRef}></div>
+    <div 
+      className={'flex justify-center'}
+      style={{ width: `${CELL_WIDTH.val}px` }}
+    >
+      <div 
+        className={'w-[10px] bg-c-blue rounded-t-[5px] mb-[10]'}
+        ref={barRef}
+        style={{ height: height_in_px }}
+      />
+
+      <HoverShowVal val={val} hide={hide} pos={pos} />
     </div>
   );
 };
 
+
+interface HoverShowValProps extends HoverPopUpProps{
+    val: number
+}
+
+const HoverShowVal: FC<HoverShowValProps> = ({ val, hide, pos }) => 
+{  
+  return(
+    <>
+      {!hide && 
+            <div
+              className={'absolute select-none'}
+              style={{ width: '50px', height: '50px', color: '#919191', top: pos[1] + 'px', left: pos[0] + 'px' }}
+            >{val}</div>
+      }
+    </>
+    
+  );
+};
 

@@ -12,7 +12,7 @@ export const CalorieGraphPage = () =>
 
   
   return(
-    <div className='w-[100%] helveticaNeueCyr flex flex-col items-center'>
+    <div className='w-[100%] helveticaNeueCyr flex flex-col items-center mt-[30px]'>
       <CaloriesChart calories={caloriesData} maxHeight={222}  maxValue={3000} numberOfDays={14} startDay={startDay}/>
       <DaySelector startDay={startDay} setStartDay={setStartDay} selectDay={selectDay} setSelectDay={setSelectDay} numberDays={14}/>
       <ShowSelectDay selectDay={selectDay}/>

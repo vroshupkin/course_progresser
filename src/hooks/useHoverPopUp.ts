@@ -16,10 +16,19 @@ export function useHoverPopUp(ref: MutableRefObject<HTMLDivElement | null>)
     if(ref.current && ref.current.parentElement)
     {
       const parent = ref.current.parentElement; 
-        
+      
       parent.onmouseenter = () => setHide(false);
       parent.onmouseleave = () => setHide(true);
-      parent.onmousemove = (e) => setPos([ e.clientX + 20, e.clientY ]);
+      parent.onmousemove = (e) => 
+      {
+        const target = e.target as HTMLDivElement;
+        
+        if(target.innerHTML === '')
+        {
+          setPos([ e.offsetX + 25, e.offsetY ]);
+        }
+      };
+      
       
     }
   }, []);

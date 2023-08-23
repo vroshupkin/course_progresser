@@ -70,16 +70,14 @@ export const CaloriesChart = ({ startDay, numberOfDays, calories, maxHeight, max
   
   
   return(
-    <div ref={containerDivRef}>
-      <div style={{ position: 'absolute' }}>
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        
-          <line x1="0" y1="80" x2="100" y2="20" stroke="black" />
-
+    <div ref={containerDivRef} className='relative'>
+      <div className='absolute pointer-events-none flex w-full'>
+        <svg className=' w-[500px]' xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="80" x2="100" y2="80" stroke="black" />
         </svg>
       </div>
       
-      <div/>
+
       {
         Object.entries(createCaloriesMap()).
           map(([ dayOrder, val ]) => 
@@ -88,7 +86,8 @@ export const CaloriesChart = ({ startDay, numberOfDays, calories, maxHeight, max
               
             return(
               <>
-                <CaloriesBar date={date} val={val} maxVal={maxValue} maxHeightPx={maxHeight}/>
+                <CaloriesBar val={val} maxVal={maxValue} maxHeightPx={maxHeight}/>
+                {/* TODO сделать логику зависимой только от пере */}
                 {date.getDay() === WEEK.Sunday && <div style={{ marginRight: '37px' }}></div>}
               </>
             );
@@ -112,14 +111,13 @@ type CaloriesChartProps = {
 
 type CaloriesBarProps = 
 {
-  date: Date,
   val: number,
   maxVal: number,
   maxHeightPx: number
 } 
 
 
-const CaloriesBar = ({ date, maxHeightPx, maxVal, val }: CaloriesBarProps) => 
+const CaloriesBar = ({ maxHeightPx, maxVal, val }: CaloriesBarProps) => 
 {
   const barRef = useRef<HTMLDivElement | null>(null);
 
@@ -129,7 +127,7 @@ const CaloriesBar = ({ date, maxHeightPx, maxVal, val }: CaloriesBarProps) =>
 
   return(
     <div 
-      className={'flex justify-center'}
+      className={'flex justify-center relative'}
       style={{ width: `${CELL_WIDTH.val}px` }}
     >
       <div 

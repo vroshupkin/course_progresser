@@ -54,10 +54,10 @@ export const CaloriesChart = ({ startDay, numberOfDays, calories, maxHeight, max
       <div className='w-full h-full absolute pointer-events-none flex '>
         <svg className='w-full h-full' xmlns="http://www.w3.org/2000/svg">
           
-          <text className='text-[12px] z-50 text-c-blue' x='0%' y='6%'>2500</text>
-          <text className='text-[12px] text-c-blue' x='0%' y={25 + 6 + '%'}>1500</text>
-          <text className='text-[12px] text-c-blue' x='0%' y={50 + 6 + '%'}>1000</text>
-          <text className='text-[12px] text-c-blue' x='0%' y={75 + 6 + '%'}>500</text>
+          <text className='text-[12px] text-c-blue' x='0%' y='6%'>{1.00 * maxValue}</text>
+          <text className='text-[12px] text-c-blue' x='0%' y={25 + 6 + '%'}>{0.75 * maxValue}</text>
+          <text className='text-[12px] text-c-blue' x='0%' y={50 + 6 + '%'}>{0.50 * maxValue}</text>
+          <text className='text-[12px] text-c-blue' x='0%' y={75 + 6 + '%'}>{0.25 * maxValue}</text>
 
 
           <line x1="0" x2="100%" y1="0%"  y2="0%" stroke="#979797" strokeWidth={2}/>
@@ -147,9 +147,13 @@ const HoverShowVal: FC<HoverShowValProps> = ({ val, hide, pos }) =>
     <>
       {!hide && 
             <div
-              className={'absolute select-none z-50'}
-              style={{ width: '50px', height: '50px', color: '#919191', top: pos[1] + 'px', left: pos[0] + 'px' }}
-            >{val}</div>
+              className={'absolute select-none z-50 rounded-sm'}
+              style={{ color: '#fafafa', top: pos[1] + 'px', left: pos[0] + 'px' }}
+            >
+              <div className='bg-c-blue ' style={{ borderRadius: '6px', padding: '5px' }}>
+                {val}  
+              </div>
+            </div>
       }
     </>
     

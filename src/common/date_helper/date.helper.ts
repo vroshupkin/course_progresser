@@ -132,14 +132,28 @@ export const DateHelper = {
   DayOrderToDate: (dayOrder: number) => new Date(dayOrder * IN_MS.DAY + 1), 
 
   /** 
- * Переводит дату на value вперед у экземпляра класса 
+ * Переводит дату на offset вперед у экземпляра класса 
  * immutable
  */ 
-  changeDays: (date: Date, value: number) => 
+  offsetDay: (date: Date, offset: number) => 
   { 
-    date = copyDate(date);
-    date.setDate(date.getDate() + value); 
+    date = new Date(date);
+    date.setDate(date.getDate() + offset); 
   
+    return date;
+  },
+
+  /**
+   * Change time to midnight. Immutable
+   */
+  toMidnight(date: Date)
+  {
+    date = new Date(date);
+    date.setMilliseconds(0);
+    date.setSeconds(0);
+    date.setMinutes(0);
+    date.setHours(0);
+    
     return date;
   }
 };
@@ -148,11 +162,6 @@ export const sum_of_day_of_month = integral(
   [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
 );
 
-
-/**
- * Copy date instance
- */
-export const copyDate = (date: Date) => new Date(date.getTime());
 
 // TODO а нужно ли сводить всё к дням? Не проще ли взять какой это день по порядку от юникс тайма?
 /**

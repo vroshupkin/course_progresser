@@ -12,7 +12,7 @@ export const caloriesData: TCaloriesData[] =
   {
     return(
       {
-        date: DateHelper.changeDays(new Date(), -v),
+        date: DateHelper.offsetDay(new Date(), -v),
         val: randomInt(0, 3000)
       }
     );

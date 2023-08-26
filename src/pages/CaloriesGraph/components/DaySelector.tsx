@@ -24,7 +24,7 @@ export const DaySelector = (props: DaySelectorProps) =>
 
 
   const changeStartDate = (count: number) => () =>
-    setStartDay(DateHelper.changeDays(startDay, count));
+    setStartDay(DateHelper.offsetDay(startDay, count));
 
   return(
     <div className={'flex'} ref={ref_div}>
@@ -71,7 +71,7 @@ export const OneWeek = (props: OneWeekProps) =>
 
   const days = 
     range(props.day_counts)
-      .map(v => DateHelper.changeDays(props.day_start, v));
+      .map(v => DateHelper.offsetDay(props.day_start, v));
 
   const changeSelectedDate = (e: React.MouseEvent) => 
   {

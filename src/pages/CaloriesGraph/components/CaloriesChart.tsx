@@ -11,58 +11,38 @@ enum CELL_WIDTH {
 
 
 export const CaloriesChart = ({ startDay, numberOfDays, calories, maxHeight, maxValue }: CaloriesChartProps) => 
-{
-  const containerDivRef = useRef<null | HTMLDivElement>(null);
-  
-  // TODO переписать под tailwind
+{  
   useEffect(() => 
   {
-    const style: CSSProperties = {
-      height: '222px',
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'end'
-    };
-
-    if(containerDivRef.current)
-    {
-      applyStyle(containerDivRef.current, style);
-    }
-    
+    startDay.setMilliseconds(0);
+    startDay.setSeconds(0);
+    startDay.setMinutes(0);
+    startDay.setHours(0);
   }, []);
   
   
   const createCaloriesMap = () => 
   {
-    const daysFilterFn = (date: Date): Boolean => 
-    {
-      const day_of_select_day = DateHelper.DateToDayOrder(date);
-      const day_of_start_day = DateHelper.DateToDayOrder(startDay);
-      const day_of_last_day = DateHelper.DateToDayOrder(DateHelper.changeDays(startDay, numberOfDays - 1));
-
-      return(
-        day_of_select_day >= day_of_start_day && 
-        day_of_select_day <= day_of_last_day
-      );
-    };
-
     const calories_dict = {} as Record<number, number>;
     
-    range(numberOfDays)
-      .map(val => DateHelper.changeDays(startDay, val))
-      .forEach(date => calories_dict[DateHelper.DateToDayOrder(date)] = 0);
+    // fill calories dict 
+    for (const day_offset of range(numberOfDays)) 
+    {
+      const date = DateHelper.offsetDay(startDay, day_offset);
+      calories_dict[Number(date)] = 0;
+    }
 
     calories
-      .filter(data => daysFilterFn(data.date))
+      .filter(data => data.date >= startDay && data.date < DateHelper.offsetDay(startDay, 14))
       .forEach(data => 
       {
-        const dayOrder = DateHelper.DateToDayOrder(data.date);
-        if(calories_dict[dayOrder] == 0)
+        const date = DateHelper.toMidnight(data.date);
+        
+        if(calories_dict[Number(date)] == 0)
         {
-          calories_dict[dayOrder] = data.val;
+          calories_dict[Number(date)] = data.val;
         }
       });
-
 
     return calories_dict;
         
@@ -70,30 +50,45 @@ export const CaloriesChart = ({ startDay, numberOfDays, calories, maxHeight, max
   
   
   return(
-    <div ref={containerDivRef} className='relative'>
-      <div className='absolute pointer-events-none flex w-full'>
-        <svg className=' w-[500px]' xmlns="http://www.w3.org/2000/svg">
-          <line x1="0" y1="80" x2="100" y2="80" stroke="black" />
+    <div className='relative h-[222px] flex items-end flex-row'>
+      <div className='w-full h-full absolute pointer-events-none flex '>
+        <svg className='w-full h-full' xmlns="http://www.w3.org/2000/svg">
+          
+          <text className='text-[12px] z-50 text-c-blue' x='0%' y='6%'>2500</text>
+          <text className='text-[12px] text-c-blue' x='0%' y={25 + 6 + '%'}>1500</text>
+          <text className='text-[12px] text-c-blue' x='0%' y={50 + 6 + '%'}>1000</text>
+          <text className='text-[12px] text-c-blue' x='0%' y={75 + 6 + '%'}>500</text>
+
+
+          <line x1="0" x2="100%" y1="0%"  y2="0%" stroke="#979797" strokeWidth={2}/>
+          <line x1="0" x2="100%" y1="25%"  y2="25%" stroke="#979797" strokeWidth={2}/>
+          <line x1="0" x2="100%" y1="50%"  y2="50%" stroke="#979797" strokeWidth={2}/>
+          <line x1="0" x2="100%" y1="75%"  y2="75%" stroke="#979797" strokeWidth={2}/>
+          
         </svg>
       </div>
       
 
+      <div className='w-[37px]'/>
+
       {
+        
         Object.entries(createCaloriesMap()).
-          map(([ dayOrder, val ]) => 
+          map(([ ms, val ]) => 
           {
-            const date = DateHelper.DayOrderToDate(Number(dayOrder));
-              
+            const date = new Date(Number(ms));
+            
             return(
               <>
                 <CaloriesBar val={val} maxVal={maxValue} maxHeightPx={maxHeight}/>
-                {/* TODO сделать логику зависимой только от пере */}
-                {date.getDay() === WEEK.Sunday && <div style={{ marginRight: '37px' }}></div>}
+                {date.getDay() === WEEK.Sunday && <div className='w-[37px]'/>}
               </>
             );
           }
           )
       }
+
+      <div className='w-[37px]'/>
     </div>
     
   );
@@ -152,7 +147,7 @@ const HoverShowVal: FC<HoverShowValProps> = ({ val, hide, pos }) =>
     <>
       {!hide && 
             <div
-              className={'absolute select-none'}
+              className={'absolute select-none z-50'}
               style={{ width: '50px', height: '50px', color: '#919191', top: pos[1] + 'px', left: pos[0] + 'px' }}
             >{val}</div>
       }

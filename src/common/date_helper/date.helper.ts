@@ -23,12 +23,12 @@ export const MONTH_NAME = {
   }
 };
 
-export const isLeapYear = (year: number | Date) => 
-{
-  year = year instanceof Date ? year.getFullYear(): year;
+export const isLeapYear = (year: number) => year % 4 === 0 && (year % 400 === 0 || !(year % 100 === 0)); 
+// {
+//   year = year instanceof Date ? year.getFullYear(): year;
   
-  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
-};
+//   return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+// };
 
 
 export const month_helper = 
@@ -60,7 +60,7 @@ export const month_helper =
   {
     const order = date.getMonth();
     
-    if(order == MONTH.February && isLeapYear(date))
+    if(order == MONTH.February && isLeapYear(date.getFullYear()))
     {
       return 29;
     }
@@ -111,7 +111,7 @@ export const month_helper =
   {
     let days = sum_of_day_of_month[date.getMonth()];
     {
-      if(isLeapYear(date) && date.getMonth() >= MONTH.February)
+      if(isLeapYear(date.getFullYear()) && date.getMonth() >= MONTH.February)
       {
         days += 1;
       }
@@ -163,61 +163,68 @@ export const sum_of_day_of_month = integral(
 );
 
 
-// TODO а нужно ли сводить всё к дням? Не проще ли взять какой это день по порядку от юникс тайма?
-/**
- * Это один день?
- */
+// // TODO а нужно ли сводить всё к дням? Не проще ли взять какой это день по порядку от юникс тайма?
+// /**
+//  * Это один день?
+//  */
 
 export const equailtyDay = (d1: Date, d2: Date) => 
   d1.getFullYear() === d2.getFullYear() &&
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
 
-export const greaterThan = (d1: Date, d2: Date) => 
+// export const greaterThan = (d1: Date, d2: Date) => 
+// {
+//   const functions = [
+//     Date.prototype.getFullYear,
+//     Date.prototype.getMonth,
+//     Date.prototype.getDate
+//   ];
+  
+//   for (const fn of functions) 
+//   {
+//     const fn1 = fn.bind(d1);
+//     const fn2 = fn.bind(d2);
+//     const res = fn1() - fn2();
+//     if(res > 0)
+//     {
+//       return true;
+//     }
+//     if(res < 0)
+//     {
+//       return false;
+//     }
+//   }
+  
+//   return false;
+  
+// };
+
+
+// const lessThan = (d1: Date, d2: Date) => !greaterThan(d1, d2);
+// const lessOrEquality = (d1: Date, d2: Date) => lessThan(d1, d2) || equailtyDay(d1, d2);
+// const greaterOrEquality = (d1: Date, d2: Date) => greaterThan(d1, d2) || equailtyDay(d1, d2);
+
+
+// export const daysCompare = (d1: Date, operator: '==' | '>' | '<' | '>=' | '<=', d2: Date) =>
+// {
+//   const operation = {
+//     '>': greaterThan,
+//     '<': lessThan,
+//     '==': equailtyDay,
+//     '>=': greaterOrEquality,
+//     '<=': lessOrEquality
+//   };
+
+//   return operation[operator](d1, d2);
+
+// };
+
+
+// 
+export const get_start_day = (year: number) => 
 {
-  const functions = [
-    Date.prototype.getFullYear,
-    Date.prototype.getMonth,
-    Date.prototype.getDate
-  ];
+  year -= 1581;
   
-  for (const fn of functions) 
-  {
-    const fn1 = fn.bind(d1);
-    const fn2 = fn.bind(d2);
-    const res = fn1() - fn2();
-    if(res > 0)
-    {
-      return true;
-    }
-    if(res < 0)
-    {
-      return false;
-    }
-  }
-  
-  return false;
-  
+  return (Math.floor(year / 4) - Math.floor(year / 100) + Math.floor(year / 400) + year + 3) % 7;
 };
-
-
-const lessThan = (d1: Date, d2: Date) => !greaterThan(d1, d2);
-const lessOrEquality = (d1: Date, d2: Date) => lessThan(d1, d2) || equailtyDay(d1, d2);
-const greaterOrEquality = (d1: Date, d2: Date) => greaterThan(d1, d2) || equailtyDay(d1, d2);
-
-
-export const daysCompare = (d1: Date, operator: '==' | '>' | '<' | '>=' | '<=', d2: Date) =>
-{
-  const operation = {
-    '>': greaterThan,
-    '<': lessThan,
-    '==': equailtyDay,
-    '>=': greaterOrEquality,
-    '<=': lessOrEquality
-  };
-
-  return operation[operator](d1, d2);
-
-};
-
-

@@ -15,6 +15,7 @@ import { UserPage } from './pages/User/User.page';
 
 import './index.css';
 import { CalorieGraphPage } from './pages/CaloriesGraph/CaloriesGraph.page';
+import { range } from './common/generator';
 
 const storage = window.localStorage.setItem;
 
@@ -53,4 +54,5 @@ export const App = observer(() =>
 
   );
 });
+
 

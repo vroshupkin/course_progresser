@@ -1,18 +1,14 @@
 import { observer } from 'mobx-react-lite';
-import CSS from 'csstype';
 import {
-  createRef,
   FC,
-  useState,
-  createContext,
-  useRef
+  useRef,
+  useState
 } from 'react';
-import { createUseStyles } from 'react-jss';
-import { CalendarStore } from './Calendar.store';
 import { range } from '../../common/generator';
-import { Colors, CalendarSizes, CalendarStyles, CalendarMonth, CalendarDisplayDateClasses } from './Calendar.style';
-import { CalendarClasses } from './Calendar.style';
-import { add_class, class_selector, toggle_class } from '../../common/class_helper';
+import { CalendarStore } from './Calendar.store';
+
+import { CalendarProps } from './Calendar.types';
+import { get_start_day, isLeapYear } from '../../common/date_helper/date.helper';
 
 const getMonth = (order: number) => 
   [ 'Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь' ][order];
@@ -20,20 +16,17 @@ const getMonth = (order: number) =>
 
 const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) => 
 {   
-  const calendar_classes = CalendarClasses();
 
 
   const DayDiv: FC<{day: number}> = observer(({ day }) => 
   {
     const div_ref = useRef<HTMLDivElement>(null);
 
-    add_class(div_ref, calendar_classes.day_cell_div);
-    toggle_class(div_ref, calendar_classes.day_select, day == store.date.getDate());
-   
     const click = () => store.changeDay(day);
     
     return (
-      <div ref={div_ref} onClick={click}>
+      <div ref={div_ref} onClick={click} 
+        className={'h-[12px] w-[44px] flex items-center justify-center cursor-pointer hover:bg-[#fff]'}>
         <span>{day}</span>
       </div>
     );
@@ -43,11 +36,9 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   {
     const ref_div = useRef<HTMLDivElement>(null);
 
-    add_class(ref_div, calendar_classes.day_cell_div);
-    add_class(ref_div, calendar_classes.day_not_selectable);
-
     return (
-      <div ref={ref_div}>
+      <div ref={ref_div} 
+        className={'h-[12px] w-[44px] flex items-center justify-center cursor-pointer bg-[#9c9c9c] text-[white]'}>
         <span>{day}</span>
       </div>
     );
@@ -60,20 +51,15 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
    */
   const LastWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
   {
-    const days = [ 
-      start_day,
-      start_day + 1,
-      start_day + 2,
-      start_day + 3,
-      start_day + 4,
-      start_day + 5,
-      start_day + 6,
-    ]
+    const days = 
+    range(7)
+      .map(v => v + start_day)
       .map(day => (day - 1) % count_days_of_month)
       .map(day => day += 1);
 
+      
     return(
-      <div className={calendar_classes.flex_element_row}>
+      <div className={'flex justify-center select-none'}>
         {days.map(v => v >= 1 && v <= 7? 
           <NotSelectableDay day={v} key={v}/>:
           <DayDiv day={v} key={v}/>
@@ -86,20 +72,15 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
 
   const FirstWeek: FC<{start_day: number, count_days_of_month: number}> = ({ start_day, count_days_of_month }) => 
   {
-    const days = [ 
-      start_day,
-      start_day + 1,
-      start_day + 2,
-      start_day + 3,
-      start_day + 4,
-      start_day + 5,
-      start_day + 6,
-    ]
-      .map(day => (day - 1) % count_days_of_month)
-      .map(day => day += 1);
+
+    const days = 
+      range(7)
+        .map(v => v + start_day)
+        .map(day => (day - 1) % count_days_of_month)
+        .map(day => day += 1);
 
     return(
-      <div className={calendar_classes.flex_element_row}>
+      <div className={'flex justify-center select-none'}>
         {days.map(v => v <= 7?
           <DayDiv day={v} key={v}/>:
           <NotSelectableDay day={v} key={v}/>
@@ -112,7 +93,7 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
   const Week: FC<{start_day: number}> = ({ start_day }) => 
   {
     return(
-      <div className={calendar_classes.flex_element_row}>
+      <div className={'flex justify-center select-none'}>
         {range(start_day, start_day + 7).map(v => <DayDiv day={v} key={v}/>)}
       </div>
     ); 
@@ -144,62 +125,60 @@ const DaySelector: FC<{store: CalendarStore}> = observer(({ store }) =>
 
 const YearSelector: FC<{store: CalendarStore}> = observer(({ store }) => 
 {
-  const calendar_classes = CalendarClasses();
+  // const calendar_classes = CalendarClasses();
   const div_ref = useRef<HTMLDivElement>(null);
-  
     
   const [ startYear, setStartYear ] = useState(store.date.getFullYear() - 2);
 
+  // const year_style = 'hover: bg-[#fff] ';
+  
+  const base_class = 'w-[66px] h-[20px] flex items-center justify-center cursor-pointer select-none';
   const YearDiv: FC<{year: number}> = observer(({ year }) => 
   { 
     const div_ref = useRef<HTMLDivElement>(null);     
 
-    class_selector(div_ref, calendar_classes.year_select, calendar_classes.year_bypass, year == store.date.getFullYear());
-
+    
+    const class_name = year == store.date.getFullYear()
+      ? 'bg-[#1A6400] text-[#fff] ' + base_class
+      : 'bg-[#D9D9D9] hover:bg-[#fff] ' + base_class;
+      
     return(
-      <div ref={div_ref} onClick={() => store.changeYear(year)}>
+      <div ref={div_ref} onClick={() => store.changeYear(year)}
+        className={class_name}
+      >
         <span>{year}</span>
       </div>
     );
   });
 
-    
-  const YearDivNext = observer(() =>   
+
+  const YearDivPrevOrNext = observer(({ type }: {type : 'prev' | 'next'}) =>   
   {
     const div_ref = useRef<HTMLDivElement>(null);
-    add_class(div_ref, calendar_classes.year_next_or_previous);
+
+    const getHandler = (type: 'prev' | 'next') => () =>
+      type === 'next'? setStartYear(startYear + 5) : setStartYear(startYear - 5);
 
     return(
-      <div ref={div_ref} onClick={() => setStartYear(startYear + 5)}>
-        <span>{'>>'}</span>
-      </div>
-    );
-  });
-    
-  const YearDivPrevious = observer(() =>   
-  {
-    const div_ref = useRef<HTMLDivElement>(null);
-    add_class(div_ref, calendar_classes.year_next_or_previous);
-
-    return(
-      <div ref={div_ref} onClick={() => setStartYear(startYear - 5)}>
-        <span>{'<<'}</span>
+      <div ref={div_ref} onClick={getHandler(type)}
+        className={'hover: bg-[#d9d9d9] cursor-pointer hover:bg-[#fff] ' + base_class}>
+        <span>{type === 'next'? '>>' : '<<'}</span>
       </div>
     );
   });
 
 
   return (
-    <div className={calendar_classes.year} ref={div_ref}>
-      <YearDivPrevious/>
+    <div  ref={div_ref}
+      className={'flex justify-center mb-[10px]'}>
 
-      <YearDiv year={startYear + 0}/>
-      <YearDiv year={startYear + 1}/>
-      <YearDiv year={startYear + 2}/>
-      <YearDiv year={startYear + 3}/>
-      <YearDiv year={startYear + 4}/>
-          
-      <YearDivNext/>
+      <YearDivPrevOrNext type='prev'/>
+
+      {range(5)
+        .map(v => <YearDiv year={startYear + v}/>)
+      }
+
+      <YearDivPrevOrNext type='next'/>
     </div>
 
   );
@@ -209,22 +188,10 @@ const YearSelector: FC<{store: CalendarStore}> = observer(({ store }) =>
 
 const MonthSelector: FC<{store: CalendarStore}> = observer(({ store }) => 
 {
-  const month_classes = CalendarMonth();
-
+  
   return (
-    <div className={month_classes.month}>
-      <MonthDiv month_order={0}  calendar_store={store}/>
-      <MonthDiv month_order={1}  calendar_store={store}/>
-      <MonthDiv month_order={2}  calendar_store={store}/>
-      <MonthDiv month_order={3}  calendar_store={store}/>
-      <MonthDiv month_order={4}  calendar_store={store}/>
-      <MonthDiv month_order={5}  calendar_store={store}/>
-      <MonthDiv month_order={6}  calendar_store={store}/>
-      <MonthDiv month_order={7}  calendar_store={store}/>
-      <MonthDiv month_order={8}  calendar_store={store}/>
-      <MonthDiv month_order={9}  calendar_store={store}/>
-      <MonthDiv month_order={10} calendar_store={store}/>
-      <MonthDiv month_order={11} calendar_store={store}/>
+    <div className={' flex justify-center flex-wrap ml-[2%] mr-[2%] gap-[3px] mb-[10px]'}>
+      {range(12).map(v => <MonthDiv month_order={v} calendar_store={store}/>)}
     </div>
   );
 });
@@ -232,13 +199,17 @@ const MonthSelector: FC<{store: CalendarStore}> = observer(({ store }) =>
 
 const MonthDiv: FC<{calendar_store: CalendarStore, month_order: number}> = observer(({ calendar_store, month_order }) => 
 {
-  const month_classes = CalendarMonth();
+  const class_name_select = 'bg-[#1A6400] text-[#fff]';
+  const class_name_bypass = 'bg-[#fff] hover:bg-[#adadad] hover:text-[#fff] cursor-pointer';
 
-  const div_ref = useRef<HTMLDivElement>(null);
-  class_selector(div_ref, month_classes.month_select, month_classes.month_bypass, month_order === calendar_store.date.getMonth());
+
+  const class_name = month_order === calendar_store.date.getMonth() ? 
+    class_name_select : 
+    class_name_bypass;
+  
 
   return(
-    <div ref={div_ref} onClick={() => calendar_store.changeMonth(month_order + 1)}>
+    <div className={class_name} onClick={() => calendar_store.changeMonth(month_order + 1)}>
       <span>{getMonth(month_order)}</span>
     </div>
   );
@@ -246,20 +217,19 @@ const MonthDiv: FC<{calendar_store: CalendarStore, month_order: number}> = obser
 
 const DateDisplay: FC<{calendar_store: CalendarStore}> = observer(({ calendar_store }) => 
 { 
-  const div_ref = useRef<HTMLInputElement>(null);
-  const classes = CalendarDisplayDateClasses();
+  
 
-  add_class(div_ref, classes.date);
+  const div_class = 'text-[14px] h-[19px] bg-[#1A6400] flex items-center justify-center select-none' + {};
 
   return(
-    <div ref={div_ref}>
-      <div>
+    <div className={'text-[#fff] flex justify-around pt-[8px] mb-[6px]'}>
+      <div className={div_class + ' w-[64px]'}>
         <span>{calendar_store.date.getDate()}</span>
       </div>
-      <div>
+      <div className={div_class +' w-[79px]'}>
         <span>{calendar_store.date.getMonth() + 1} {getMonth(calendar_store.date.getMonth())}</span>
       </div>
-      <div>
+      <div className={div_class + ' w-[64px]'}>
         <span>{calendar_store.date.getFullYear()} год</span>
       </div>
     </div>
@@ -267,21 +237,37 @@ const DateDisplay: FC<{calendar_store: CalendarStore}> = observer(({ calendar_st
   );
 });
 
-interface CalendarProps {
-  store?: CalendarStore;
-  onChange?(date: Date): void;
-  initDate?: Date
+
+type TDaySelector = {
+  year: number
+  month: number,
+  
 }
+
+const NewDaySelector = ({ month, year }: TDaySelector) => 
+{
+  const year_start_day = get_start_day(year);
+
+  const month_number_days = [ 31, isLeapYear(year)? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+  const month_start = month_number_days
+    .map((_, i, arr) => i === 0? arr[i]: arr[i] + arr[i - 1])
+    .map(v => (v + year_start_day) % 7);
+  
+  
+  // const [prev_month_days, curr_month_days, next_month_days] = [days[12 - 1 + month], days[month], days[month + 1 ]]
+
+  const prev_month_days = month_start[(12 - 1 + month) % 12];
+  const curr_month_days = month_start[month];
+  
+  
+};
+
 
 export const Calendar: FC<CalendarProps> = observer(
   ({ store, onChange, initDate }) => 
   {
-    const calendar_classes = CalendarClasses();
 
-    if(!store)
-    {
-      store = new CalendarStore(initDate);
-    }
+    store = store === undefined? new CalendarStore(initDate): store;
 
     if(onChange != undefined)
     {
@@ -289,12 +275,12 @@ export const Calendar: FC<CalendarProps> = observer(
     }
     
     return (
-      <div className={calendar_classes.main_container}>
+      <div className={'w-[380px] h-[192px] bg-[#ebebeb]'} >
 
         <DateDisplay calendar_store={store}/>
         <YearSelector store={store}/>
         <MonthSelector store={store}/>
-        <DaySelector store={store}/>
+        {/* <DaySelector store={store}/> */}
 
       </div>
     );

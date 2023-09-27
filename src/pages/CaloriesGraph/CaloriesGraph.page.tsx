@@ -4,6 +4,7 @@ import { DaySelector } from './components/DaySelector';
 import { CaloriesChart } from './components/CaloriesChart';
 import { ShowSelectDay } from './components/CaloriesInfo';
 import './CaloriesGraph.page.css';
+import { Calendar } from '../../components/Calendar/Calendar';
 
 export const CalorieGraphPage = () => 
 {
@@ -16,6 +17,8 @@ export const CalorieGraphPage = () =>
       <CaloriesChart calories={caloriesData} maxHeight={222}  maxValue={3000} numberOfDays={14} startDay={startDay}/>
       <DaySelector startDay={startDay} setStartDay={setStartDay} selectDay={selectDay} setSelectDay={setSelectDay} numberDays={14}/>
       <ShowSelectDay selectDay={selectDay}/>
+
+      <Calendar></Calendar>
     </div>
   );
 };

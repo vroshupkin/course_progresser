@@ -17,9 +17,13 @@ export enum WEEK {
 export const MONTH_NAME = {
   ru: {
     /** Именительный падеж */
-    nominative: [ 'январь', 'февраль', 'март', 'апрель' , 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь' ],
+    nominative: [ 'январь', 'февраль', 'март', 'апрель' , 'май', 'июнь', 'июль',
+      'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь' 
+    ],
     /** Родительный падеж */
-    genetive: [ 'января', 'февраля', 'марта', 'апреля' , 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря' ]
+    genetive: [ 'января', 'февраля', 'марта', 'апреля' , 'мая', 'июня', 'июля', 
+      'августа', 'сентября', 'октября', 'ноября', 'декабря' 
+    ]
   }
 };
 
@@ -173,54 +177,6 @@ export const equailtyDay = (d1: Date, d2: Date) =>
   d1.getMonth() === d2.getMonth() &&
   d1.getDate() === d2.getDate();
 
-// export const greaterThan = (d1: Date, d2: Date) => 
-// {
-//   const functions = [
-//     Date.prototype.getFullYear,
-//     Date.prototype.getMonth,
-//     Date.prototype.getDate
-//   ];
-  
-//   for (const fn of functions) 
-//   {
-//     const fn1 = fn.bind(d1);
-//     const fn2 = fn.bind(d2);
-//     const res = fn1() - fn2();
-//     if(res > 0)
-//     {
-//       return true;
-//     }
-//     if(res < 0)
-//     {
-//       return false;
-//     }
-//   }
-  
-//   return false;
-  
-// };
-
-
-// const lessThan = (d1: Date, d2: Date) => !greaterThan(d1, d2);
-// const lessOrEquality = (d1: Date, d2: Date) => lessThan(d1, d2) || equailtyDay(d1, d2);
-// const greaterOrEquality = (d1: Date, d2: Date) => greaterThan(d1, d2) || equailtyDay(d1, d2);
-
-
-// export const daysCompare = (d1: Date, operator: '==' | '>' | '<' | '>=' | '<=', d2: Date) =>
-// {
-//   const operation = {
-//     '>': greaterThan,
-//     '<': lessThan,
-//     '==': equailtyDay,
-//     '>=': greaterOrEquality,
-//     '<=': lessOrEquality
-//   };
-
-//   return operation[operator](d1, d2);
-
-// };
-
-
 // 
 export const get_start_day = (year: number) => 
 {
@@ -228,3 +184,4 @@ export const get_start_day = (year: number) =>
   
   return (Math.floor(year / 4) - Math.floor(year / 100) + Math.floor(year / 400) + year + 3) % 7;
 };
+

@@ -9,6 +9,7 @@ import { CalendarStore } from './Calendar.store';
 
 import { CalendarProps } from './Calendar.types';
 import { get_start_day, isLeapYear } from '../../common/date_helper/date.helper';
+import { integral } from '../../common/math/integral';
 
 const getMonth = (order: number) => 
   [ 'Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь' ][order];
@@ -248,11 +249,19 @@ const NewDaySelector = ({ month, year }: TDaySelector) =>
 {
   const year_start_day = get_start_day(year);
 
-  const month_number_days = [ 31, isLeapYear(year)? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
-  const month_start = month_number_days
-    .map((_, i, arr) => i === 0? arr[i]: arr[i] + arr[i - 1])
+  // const deltas_year = [0, 3, ]
+  const month_number_days = [ 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30 ];
+
+  if(isLeapYear(year))
+  {
+    month_number_days[2]++;
+  }
+  
+
+  const month_start = integral(month_number_days)
     .map(v => (v + year_start_day) % 7);
   
+  console.log(month_start);
   
   // const [prev_month_days, curr_month_days, next_month_days] = [days[12 - 1 + month], days[month], days[month + 1 ]]
 
@@ -262,6 +271,7 @@ const NewDaySelector = ({ month, year }: TDaySelector) =>
   
 };
 
+NewDaySelector({ month: 0, year: 2023 });
 
 export const Calendar: FC<CalendarProps> = observer(
   ({ store, onChange, initDate }) => 

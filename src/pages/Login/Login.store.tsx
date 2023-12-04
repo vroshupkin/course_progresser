@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { userStore } from '../../components/stores/user.store';
+import { error } from 'console';
 
 export class LoginStore
 {
@@ -20,17 +21,17 @@ export class LoginStore
 
   OnChangeLogin = (e: React.ChangeEvent<HTMLInputElement>) =>
   { 
-    this.default_error();
+    this.set_default_error();
     this.login = e.target.value;
   };
 
   OnChangePassword = (e: React.ChangeEvent<HTMLInputElement>) =>
   {
-    this.default_error();
+    this.set_default_error();
     this.password = e.target.value;
   };
 
-  private default_error()
+  private set_default_error()
   {
     this.login_error = '';
     this.password_error = '';
@@ -38,7 +39,7 @@ export class LoginStore
 
   ClickEnter = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>)  =>
   {
-    this.default_error();
+    this.set_default_error();
     
     const dto = 
     {
@@ -48,14 +49,28 @@ export class LoginStore
     
     this.isLoading = true;
     const response = await userStore.receiveToken(dto);
-    if(response instanceof Error)
+    console.log(response);
+
+    // @ts-ignore
+    console.log(response.name);
+
+    if(response instanceof TypeError && response.message === 'Failed to fetch')
     {
-      this.login_error = response.message;
-      this.password_error = response.message;
+      this.login_error = 'Не удаётся соединиться с сервером';
+      this.password_error = 'Не удаётся соединиться с сервером';
+    }
+
+    else if(response instanceof Error)
+    {
+      
+
+      console.log();
+    
     }
     else if(response instanceof Response)
     {
-        
+      
+      
       if(response.status === 404)
       {
         this.login_error =  '404 Нет такой страницы',
@@ -65,6 +80,9 @@ export class LoginStore
       if(!response.ok)
       {
         const json = await response.json() as {login_error: string, password_error: string};
+        
+        // console.log(json);
+        
 
         this.login_error = json.login_error;
         this.password_error = json.password_error;

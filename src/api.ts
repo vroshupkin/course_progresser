@@ -1,5 +1,5 @@
 import Cookie from 'universal-cookie';
-import { REACT_APP_BACKEND_URL_DEV } from './constants';
+import { BACKEND_URL } from './env';
 import { userStore } from './components/stores/user.store';
 import Mime from 'mime/Mime';
 
@@ -25,7 +25,7 @@ const AuthorizationHeader =
 async function post(url = '', body = {}, content_type = 'application/json') 
 {
     
-  url = REACT_APP_BACKEND_URL_DEV + url;
+  url = BACKEND_URL + url;
   
   let response: Response;
 
@@ -65,7 +65,7 @@ async function post(url = '', body = {}, content_type = 'application/json')
 
 export async function get(url = '') 
 {
-  url = REACT_APP_BACKEND_URL_DEV + url;
+  url = BACKEND_URL + url;
   
   const headers: HeadersInit = 
   {
@@ -104,7 +104,7 @@ export async function get(url = '')
 
 const upload_file = async(url = '', body: FormData) => 
 {
-  url = REACT_APP_BACKEND_URL_DEV + url;
+  url = BACKEND_URL + url;
   
 
   const headers: HeadersInit = 

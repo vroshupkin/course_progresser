@@ -62,10 +62,7 @@ export class LoginStore
 
     else if(response instanceof Error)
     {
-      
-
       console.log();
-    
     }
     else if(response instanceof Response)
     {

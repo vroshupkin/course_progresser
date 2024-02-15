@@ -16,6 +16,7 @@ import { UserPage } from './pages/User/User.page';
 import './index.css';
 import { CalorieGraphPage } from './pages/CaloriesGraph/CaloriesGraph.page';
 import { range } from './common/generator';
+import { DiscogsPage } from './pages/Discogs/Discogs.page';
 
 const storage = window.localStorage.setItem;
 
@@ -38,7 +39,9 @@ export const App = observer(() =>
         <Route path={'income-bars'} element={<IncomeBarsPage a=''/>}/>          
         <Route path={'user'} element={<UserPage userStore={userStore}/>}/>          
         
-        <Route path={'calories-graph'} element={<CalorieGraphPage/>}/>          
+        <Route path={'calories-graph'} element={<CalorieGraphPage/>}/>      
+
+        <Route path={'discogs'} element={<DiscogsPage/>}></Route>    
       </Routes>
           
       {/* <div>

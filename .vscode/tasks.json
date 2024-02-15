@@ -10,6 +10,13 @@
 			"group": {
 				"isDefault": true
 			}
-		}
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
 	]
 }

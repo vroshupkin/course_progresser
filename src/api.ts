@@ -1,7 +1,8 @@
 import Cookie from 'universal-cookie';
-import { BACKEND_URL } from './env';
+
 import { userStore } from './components/stores/user.store';
 import Mime from 'mime/Mime';
+import { ENV } from './env';
 
 const cookie = new Cookie();
 
@@ -25,7 +26,7 @@ const AuthorizationHeader =
 async function post(url = '', body = {}, content_type = 'application/json') 
 {
     
-  url = BACKEND_URL + url;
+  url = ENV.BACKEND_URL + url;
   
   let response: Response;
 
@@ -65,7 +66,7 @@ async function post(url = '', body = {}, content_type = 'application/json')
 
 export async function get(url = '') 
 {
-  url = BACKEND_URL + url;
+  url = ENV.BACKEND_URL + url;
   
   const headers: HeadersInit = 
   {
@@ -104,7 +105,7 @@ export async function get(url = '')
 
 const upload_file = async(url = '', body: FormData) => 
 {
-  url = BACKEND_URL + url;
+  url = ENV.BACKEND_URL + url;
   
 
   const headers: HeadersInit = 

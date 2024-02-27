@@ -53,3 +53,8 @@ const res_1 = test_time(n)(get_file_extension_1)([ 'ab.de.f.' ]);
 const res_2 = test_time(n)(get_file_extension_2)([ 'ab.de.f.' ]);
 
 // console.log(Number(res_1) - Number(res_2));
+
+export function timeout(ms: number) 
+{
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

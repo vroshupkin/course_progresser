@@ -14,9 +14,14 @@ export class DiscogsApiBackend
   static get_release = async (id: number) => 
   {    
     const url = ENV.BACKEND_URL + `discogs/get-release-pool?id=${id}`;
-    const res = await fetch(url, { method: 'GET' });
-  
-    return res.text();
+    const response = await fetch(url, { method: 'GET' });
+    
+    if(response.status === 404)
+    {
+      return { json: await response.text(), status: response.status };
+    }
+
+    return { json: await response.json(), status: response.status };
   };
 
 }

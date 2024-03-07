@@ -3,22 +3,18 @@
 import { Login } from './pages/Login/Login.page';
 import { LoginStore } from './pages/Login/Login.store';
 
-import { Route, Router, Routes, createBrowserRouter, createRoutesFromElements, redirect } from 'react-router-dom';
-import { Timers } from './pages/Timer/Timers.page';
-import { IncomeBarsPage } from './pages/IncomeBars/IncomeBars.page';
-import { LeftMenu } from './components/LeftMenu';
-import { userStore } from './components/stores/user.store';
-import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
+import { Route, Routes } from 'react-router-dom';
+import { userStore } from './components/stores/user.store';
+import { IncomeBarsPage } from './pages/IncomeBars/IncomeBars.page';
+import { Timers } from './pages/Timer/Timers.page';
 import { UserPage } from './pages/User/User.page';
 
 
 import './index.css';
 import { CalorieGraphPage } from './pages/CaloriesGraph/CaloriesGraph.page';
-import { range } from './common/generator';
 import { DiscogsPage } from './pages/Discogs/Discogs.page';
-
-const storage = window.localStorage.setItem;
+import { LeftMenu } from './widgets/LeftMenu';
 
 
 export const App = observer(() =>

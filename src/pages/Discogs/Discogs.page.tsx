@@ -1,20 +1,16 @@
 
-import React, { Dispatch, KeyboardEventHandler, Reducer, ReducerAction, createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
-import { DiscogsApiBackend } from './Discogs.api';
-import { stat } from 'node:fs';
-import { checkVaidate } from '../../shared/checkValidateSymbol';
-import { ContextReducerDispatch, ContextReducerState, TableProvider, TableReducer } from './Table.store';
-import { TableRow, Th } from '../../widgets/Table';
+import React, { KeyboardEventHandler, createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { HttpStatus } from '../../common/HTTPStatus';
 import { timeout } from '../../common/test_time';
+import { TailwindStyles } from '../../shared/TailwindStyles';
+import { checkVaidate } from '../../shared/checkValidateSymbol';
+import { ChunkIterator } from '../../shared/iterators/ChunkIterator';
 import { utf_mapper } from '../../shared/mappUtf';
-import { Div } from '../../common/htmlRef';
-import { act } from '@testing-library/react';
+import { ModalView } from '../../widgets/Modal_1/Modal_1';
+import { TableRow } from '../../widgets/Table';
+import { DiscogsApiBackend } from './Discogs.api';
+import { ContextReducerDispatch, ContextReducerState, TableProvider } from './Table.store';
 
-const TailwindStyles = 
-{
-  button: 'bg-[#666] hover:bg-[#888] rounded-md p-[10px] border-[#000] border-[1px] text-[#eee]'
-};
 
 function useAsyncReducer(reducer: any, initState: any) 
 {
@@ -208,6 +204,17 @@ export const LoadingButton = () =>
 
 };
 
+const CenterSection = ({ children }: {children: any}) => 
+{
+  return(
+    <div className='mt-[10px] flex content-center justify-center w-[100%] flex-col'>
+      <section className='mt-[10px] content-center justify-center flex flex-row'>
+        {children}
+      </section>
+    </div>
+  );
+};
+ 
 // @ts-ignore
 export const ButtonWithInput = ({ button_name, button_hanlder, classNameButton, classNameInput }) => 
 {
@@ -218,24 +225,21 @@ export const ButtonWithInput = ({ button_name, button_hanlder, classNameButton, 
 
   return(
     <>
-      <div className='mt-[10px] flex content-center justify-center w-[100%] flex-col'>
-        <section className='mt-[10px] content-center justify-center flex flex-row'>
-          {reducerState.loading 
-            ?<LoadingButton/>
-            : <button className={TailwindStyles.button + ' mr-[7px] h-[50px] ' + classNameButton}
-              onClick={() => button_hanlder(input)}>{button_name ?? 'Do API'}</button>
-          }
+      <CenterSection>
+        {reducerState.loading 
+          ?<LoadingButton/>
+          : <button className={TailwindStyles.button + ' mr-[7px] h-[50px] ' + classNameButton}
+            onClick={() => button_hanlder(input)}>{button_name ?? 'Do API'}</button>
+        }
           
 
-          <input 
-            className={'border-[1px] border-[#000] rounded-md p-[10px] w-[100px] h-[50px] '+ classNameInput }
-            type="text" 
-            onChange={(e) => setInput(e.target.value)}
-          />
+        <input 
+          className={'border-[1px] border-[#000] rounded-md p-[10px] w-[100px] h-[50px] '+ classNameInput }
+          type="text" 
+          onChange={(e) => setInput(e.target.value)}
+        />
 
-        </section>
-
-      </div>
+      </CenterSection>
     </>
   );
 };
@@ -246,6 +250,7 @@ export const CheckExistTableApp = () =>
   const dispatch = useContext(ContextReducerDispatch);
   const state = useContext(ContextReducerState);
 
+  
   const add_release = async (id: string) => 
   {
     // console.log(new Date());
@@ -349,6 +354,9 @@ export const CheckExistTableApp = () =>
     
   };
   
+  const clear_table_class = 'w-[200px] bg-[#666] hover:bg-[#888] ' +
+  'rounded-md p-[10px] border-[#000] border-[1px] text-[#eee] mr-[7px] h-[50px] ';
+  
   return(
     
     <>
@@ -356,7 +364,20 @@ export const CheckExistTableApp = () =>
         classNameButton={''}
         classNameInput={'w-[200px]'}
         button_hanlder={add_release}
-        button_name={'Add release'} ></ButtonWithInput>
+        button_name={'Add release'} 
+      />
+      <CenterSection>
+        <button className={clear_table_class} onClick={() => 
+        {
+          if(dispatch)
+          {
+            dispatch({ name: 'clear' });
+          }
+          
+        }}>Clear table</button>
+      </CenterSection>
+      
+
       <ExistsIdTable/>
       <ShowData/>
     </>
@@ -367,6 +388,7 @@ export const ExistsIdTable = () =>
 {
   const state = useContext(ContextReducerState);
 
+  const utf_map = JSON.parse(TablePage.getAllPages(20));
 
   return(
     // <div className={'w-[75%]'}>
@@ -374,7 +396,7 @@ export const ExistsIdTable = () =>
       <TableRow arr={[ 'id', 'name', 'check', 'album', 'отредактированная строка', 'лишние символы' ]}/>
       
       {state.tableData.map(
-        v => <TableRow arr={[ v.id, v.artist, v.check, v.album, utf_mapper(`${v.artist} ${v.album}`), v.excess_chars ]}/>
+        v => <TableRow arr={[ v.id, v.artist, v.check, v.album, utf_mapper(utf_map)(`${v.artist} ${v.album}`), v.excess_chars ]}/>
       )}
     </table>
     // </div>
@@ -408,9 +430,9 @@ export const DiscogsPage = () =>
           <CheckExistTableApp/>
         </TableProvider>
         
-        <IndexContextProvider>
+        <MapperTableProvider>
           <ChangeCharsTable/>
-        </IndexContextProvider>
+        </MapperTableProvider>
       </div>
       
       
@@ -421,77 +443,42 @@ export const DiscogsPage = () =>
 const range = (start: number, end: number) => [ ...Array(end - start).keys() ].map(v => v + start);
 
 
-// class TableKeyListener
-// {
-//   constructor(private ref_number: React.RefObject<number>)
-//   {
-//     document.addEventListener('keydown', this.tab_handler);
-//   }
-
-//   private tab_handler(ev: KeyboardEvent)
-//   {
-//     console.log(this.ref_number);
-    
-//     if(ev.key === 'Tab')
-//     {
-//       console.log(ev.key);
-//     } 
-//   }
-
-//   destruct()
-//   {
-//     document.removeEventListener('keydown', this.tab_handler);
-//   }
-// }
-
-
-// const UseTabPressComponent = (ind: number, setInd: (num: number) => void) => 
-// {
-//   const get_ind = () => ind;
-
-
-//   useEffect(() => 
-//   {
-//     const tab_hanlder = (ev: KeyboardEvent) => 
-//     {
-//       console.log(`handler ind ${get_ind()}`);
-//       if(ev.key === 'Tab')
-//       {
-//         console.log(ev.key);
-        
-//         setInd((ind + 1) % 64);
-
-        
-//       } 
-//     };
-//     document.addEventListener('keydown', tab_hanlder);
-
-//     return () => document.removeEventListener('keydown', tab_hanlder);
-//   }, []);
-
-//   useEffect(() => 
-//   {
-//     console.log(`inner ind ${ind}`);
-    
-//   }, [ ind ]);
-  
-//   return;
-// };
-
 interface IIndexContext{
-  State: {index: number},
-  Action: {name: 'change_index', index: number},
+  State: 
+  {
+    index: number,
+     page: number,
+     map: string[]
+    },
+  Action: 
+  {
+    name: 'change_index',
+    index: number
+  } | 
+  {
+    name: 'change_page',
+    page: number,
+    map: string[]
+  } |
+  {
+    name: 'change_map',
+    map: string[]
+  } |
+  {
+    name: 'load_page',
+    page: number
+  },
+
+
   Dispatch: React.Dispatch<IIndexContext['Action']>,
 }
 
 
-const IndexContextDispatch = createContext<null | IIndexContext['Dispatch']>(null);
-const IndexContextState = createContext<null | IIndexContext['State']>(null);
+const MapperContextDispatch = createContext<null | IIndexContext['Dispatch']>(null);
+const MapperContextState = createContext<null | IIndexContext['State']>(null);
 
-const indexReducer = (state: IIndexContext['State'], action: IIndexContext['Action']) => 
+const mapTableReducer = (state: IIndexContext['State'], action: IIndexContext['Action']) => 
 {
-  console.log(action);
-  
   switch(action.name)
   {
   case 'change_index':
@@ -501,134 +488,102 @@ const indexReducer = (state: IIndexContext['State'], action: IIndexContext['Acti
       index: action.index
     };
   }
+  case 'change_page':
+  {
+    return{
+      ...state,
+      page: action.page,
+      map: action.map
+    };
+  }
+
+  case 'change_map':
+  {
+    return{
+      ...state,
+      map: action.map
+    };
+  }
+
+  case 'load_page':
+  {
+    return{
+      ...state,
+      map: new TablePage(action.page).get_map()
+    };
+  }
+
     
   }
 };
 
-const IndexContextProvider = ({ children }: {children: any}) => 
+const MapperTableProvider = ({ children }: {children: any}) => 
 {
-  const [ state, dispatch ] = useReducer(indexReducer, { index: -1 });
+  
+  const [ state, dispatch ] = useReducer(mapTableReducer, { index: -1, page: 0, map: Array<string>(128).fill('') });
   
   return (
-    <IndexContextDispatch.Provider value={dispatch}>
-      <IndexContextState.Provider value={state}>
+    <MapperContextDispatch.Provider value={dispatch}>
+      <MapperContextState.Provider value={state}>
         {children}
-      </IndexContextState.Provider>
-    </IndexContextDispatch.Provider>
+      </MapperContextState.Provider>
+    </MapperContextDispatch.Provider>
   );
   
 };
 
 
-const useTableKey = (elem: HTMLDivElement | null) => 
-{
-  if(!elem)
-  {
-    return;
-  }
-
-  const dispatchIndex = useContext(IndexContextDispatch);
-  const index = useContext(IndexContextState);
-  
-  // document.addEventListener('keydown', handler);
-  
-  function handler(ev: KeyboardEvent)
-  {
-    if(!index || !dispatchIndex)
-    {
-      return;
-    }
-    console.log(index);
-      
-    if(ev.key === 'Tab')
-    {
-      console.log(`TAB ${index.index}`);
-        
-      dispatchIndex({ name: 'change_index', index: index.index + 1 });
-    }
-  }
-  
-  useEffect(() => 
-  {
-    console.log(index);
-    
-    if(index === null || dispatchIndex === null)
-    {
-      return;
-    }
-    elem.addEventListener('keydown', handler);
-    
-    return () => 
-    {
-      console.log('document.removeEventListener');
-      
-      elem.removeEventListener('keydown', handler);
-    };
-  }, []);  
-
-  useEffect(() => 
-  {
-    console.log(`Update hook ${index?.index}`);
-    
-    
-  }, [ index ]);
-
-  return index;
-};
-
-
 const ChangeCharsTable = () => 
 {
-
+  
   const generate_row = (start: number, end: number, page: number) => 
-    range(start, end).map(v => String.fromCharCode(v + 256 * page));
+    range(start, end).map(v => String.fromCharCode(v + 128 * page));
 
-  const [ page, setPage ] = useState(0);
-  const [ map, setMap ] = useState(Array(64).fill(''));
   const tableRef = useRef(null);
 
-  const index = useContext(IndexContextState);
-  const dispatchIndex = useContext(IndexContextDispatch);
+  const state = useContext(MapperContextState);
+  const dispatch = useContext(MapperContextDispatch);
   
-  if(index === null || dispatchIndex === null)
+  if(state === null || dispatch === null)
   {
     return <></>;
   }
   
   useEffect(() => 
   {
-    // console.log('Context like state');
-    // console.log(index, dispatchIndex);
-     
-  });
+    console.log(state.map);
+    
+  }, [ state ]);
 
-  
-  // useTableKey(tableRef.current);
-  
 
-  const rows = range(0 * 16, 1 * 16).map(k => generate_row( k * 8 , (k + 1) * 8, page));
+  const rows = range(0 * 16, 1 * 16).map(k => generate_row( k * 8 , (k + 1) * 8, state.page));
   
 
   const InputCell = ({ select_ind, ind }: {select_ind: number, ind: number}) => 
   {
-    
+
+    const bg_style = state.map[ind] ? { backgroundColor : 'green' }: { backgroundColor : 'white' };
+
     return(
       <>
         {select_ind === ind ?
           <input 
-            className='border-2 border-[#000] rounded-md w-[50px]' 
+            className={'border-2 border-[#000] rounded-md w-[50px]'}  
             type="text"
             autoFocus={true}
-            value={map[ind]}
+            value={state.map[ind]}
             onChange={e => 
             {
-              const arr = [ ...map ];
+              const arr = [ ...state.map ];
               arr[ind] = e.target.value;
-              setMap(arr);
+              
+              
+              // setMap(arr);
+              dispatch({ name: 'change_map', map: arr });
             }}
           /> : 
 
-          <div>{map[ind]}</div>
+          <div style={bg_style} className='w-[25%]'>{state.map[ind]}</div>
         }
       </>
       
@@ -636,47 +591,121 @@ const ChangeCharsTable = () =>
     );
   };
   
+  useEffect(() => 
+  {
+    dispatch({ name: 'load_page', page: 0 });
+  }, []);
+
 
   const pressHandler: KeyboardEventHandler<HTMLDivElement> = (e) => 
   {
     const selector: Record<string, number> = {
-      'ArrowRight': index.index + 1,
-      'ArrowLeft':  index.index - 1,
-      'ArrowUp':    index.index - 8,
-      'ArrowDown':  index.index + 8,
+      'ArrowRight': state.index + 1,
+      'ArrowLeft':  state.index - 1,
+      'ArrowUp':    state.index - 8,
+      'ArrowDown':  state.index + 8,
     };
     
     if(typeof selector[e.key] === 'number')
     {   
-      dispatchIndex({ name: 'change_index', index: selector[e.key] % 128 });
+      dispatch({ name: 'change_index', index: selector[e.key] % 128 });
     }
   };
 
-  return(
-    <div className='w-[100%]' ref={tableRef} onKeyDown={pressHandler}>
-      <button className='w-[64px] border-[1px] rounded-md' onClick={e => setPage(page - 1)}>-</button>
-      <button className='w-[64px] border-[1px] rounded-md' onClick={e => setPage(page + 1)}>+</button>
-      
-      <div className='w-[64px] border-[1px] rounded-sm'>Page: {page}</div>
+  const change_page = (current_page: number, next_page: number) => 
+  {
+    new TablePage(current_page).save(state.map);
+    const map = new TablePage(next_page).get_map();
 
-      <table className='w-[100%] table-fixed'>
-        {rows.map((row, y) => 
-        {
-          const new_row = row.map((val, x) => 
-            <div className='flex justify-around' onClick={() => 
-            {
-              dispatchIndex({ name: 'change_index', index: 8 * y + x });   
-            }
-            }>
-              <div>{val}</div>
-              <InputCell select_ind={index.index} ind={8 * y + x}/>
-            </div>
-          );
+    dispatch({ name: 'change_page', page: next_page, map });
+  };
+
+  const prev_page = () => 
+  {
+    if(state.page > 0)
+    {
+      change_page(state.page, state.page - 1);
+    }
+    
+  };
+
+  const next_page = () => 
+  {
+    change_page(state.page, state.page + 1);
+  };
+
+  const GetAllPagesHandler = () => 
+  {
+    const arr = TablePage.getAllPages(10);
+
+    console.log(`const arr = ${arr};`);
+
+    
+  };
+
+  const save_page = (str: string) => 
+  {
+    // eslint-disable-next-line     
+    const data = str.replaceAll("'", '"');
+      
+      
+    const arr = JSON.parse(data);
+    if(!Array.isArray(arr))
+    {
+      return; 
+    }
+      
+    let page = 0;
+    for(const str_arr of ChunkIterator(arr))
+    {
+      new TablePage(page).save(str_arr);
+      page++;
+    }
+    
+  };
+  
+  const [ showModal, setShowModal ] = useState(false);
+
+  return(
+    <>
+      
+      <ModalView onAccept={save_page} setShow={setShowModal} show={showModal}/>
+      
+    
+      <div className='w-[100%]' ref={tableRef} onKeyDown={pressHandler}>
+        <div className='flex'>
+          <div className='w-[100px] border-[1px] rounded-md '>{state.page * 128} - {(state.page + 1) * 128}</div>
+          <button className='w-[64px] border-[1px] rounded-md hover:bg-[#ccc]' onClick={prev_page}>-</button>
+          <div className='w-[64px] border-[1px] rounded-md '>Page: {state.page}</div>
+          <button className='w-[64px] border-[1px] rounded-md hover:bg-[#ccc]' onClick={next_page}>+</button>
+          <button className='w-[128px] ml-2 border-[1px] rounded-md hover:bg-[#ccc]' onClick={GetAllPagesHandler}>
+          Get all page</button>
+          <button className='w-[256px] ml-2 border-[1px] rounded-md hover:bg-[#ccc]' 
+            onClick={_ => setShowModal(true)}>
+          Внести данные таблицы</button>
+        
+        </div>
+      
+      
+        <table className='w-[100%] table-fixed'>
+          {rows.map((row, y) => 
+          {
+            const new_row = row.map((val, x) => 
+              <div className='flex justify-around' onClick={() => 
+              {
+                dispatch({ name: 'change_index', index: 8 * y + x });   
+              }
+              }>
+                <div>{val}</div>
+                <InputCell select_ind={state.index} ind={8 * y + x}/>
+              </div>
+            );
           
-          return <TableRow arr={new_row}/>;
-        })}
-      </table>
-    </div>
+            return <TableRow arr={new_row}/>;
+          })}
+        </table>
+      </div>
+    </>
   );
 };
 type PropDiscogsRow = {str: string}
@@ -693,7 +722,70 @@ export const DiscogsRow = ({ str }: PropDiscogsRow) =>
   );
 };
 
-// export const DiscogsTable = () => 
-// {
 
-// };
+class TablePage
+{
+  constructor(private page: number)
+  {}
+
+  private get key()
+  {
+    return `TablePage_${this.page}`;
+  }
+
+  save(page_map: string[])
+  {
+    localStorage.setItem(this.key, JSON.stringify(page_map));
+  }
+
+  get_map()
+  {
+    const raw_str = localStorage.getItem(this.key);
+    
+    return raw_str ? JSON.parse(raw_str) : Array(128).fill(''); 
+  }
+
+  /**
+ * @param n первые n страниц
+ */
+  static getAllPages(n: number)
+  {
+    
+    const arr = [];
+    for(let page = 0; page < n; page++)
+    {
+      const raw_str = localStorage.getItem(`TablePage_${page}`);
+      const read_arr = raw_str ? JSON.parse(raw_str) : Array(128).fill('');
+      arr.push(...read_arr);
+    }
+
+    const str = JSON.stringify(arr);
+    let out = '';
+    let col = 1;
+    let is_string_literal = false;
+
+    for(let i = 0; i < str.length; i++)
+    {
+      if(str[i] === '"')
+      { 
+        is_string_literal = !is_string_literal;
+      }
+    
+    
+      out += str[i];
+      if(col >= 100 && is_string_literal == false)
+      { 
+        out += '\n';
+        col = 0;
+      }
+    
+      col++;
+    }
+  
+  
+    return out;
+  }
+
+}
+
+

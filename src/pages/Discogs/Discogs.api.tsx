@@ -5,7 +5,7 @@ export class DiscogsApiBackend
 {
   static save_release = async (id: number) => 
   {    
-    const url = ENV.BACKEND_URL + `discogs/save-release?id=${id}`;
+    const url = ENV.BACKEND_URL_LOCALHOST + `discogs/save-release?id=${id}`;
     const res = await fetch(url, { method: 'GET' });
   
     return res.json();
@@ -13,7 +13,7 @@ export class DiscogsApiBackend
 
   static get_release = async (id: number) => 
   {    
-    const url = ENV.BACKEND_URL + `discogs/get-release-pool?id=${id}`;
+    const url = ENV.BACKEND_URL_LOCALHOST + `discogs/get-release-pool?id=${id}`;
     const response = await fetch(url, { method: 'GET' });
     
     if(response.status === 404)

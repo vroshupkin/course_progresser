@@ -26,7 +26,7 @@ const AuthorizationHeader =
 async function post(url = '', body = {}, content_type = 'application/json') 
 {
     
-  url = ENV.BACKEND_URL + url;
+  url = ENV.BACKEND_URL_DDNS + url;
   
   let response: Response;
 
@@ -66,7 +66,7 @@ async function post(url = '', body = {}, content_type = 'application/json')
 
 export async function get(url = '') 
 {
-  url = ENV.BACKEND_URL + url;
+  url = ENV.BACKEND_URL_DDNS + url;
   
   const headers: HeadersInit = 
   {
@@ -105,7 +105,7 @@ export async function get(url = '')
 
 const upload_file = async(url = '', body: FormData) => 
 {
-  url = ENV.BACKEND_URL + url;
+  url = ENV.BACKEND_URL_DDNS + url;
   
 
   const headers: HeadersInit = 

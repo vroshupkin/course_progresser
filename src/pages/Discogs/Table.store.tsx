@@ -25,6 +25,9 @@ type TContextReducerActions<ROW> =
 {
   name: 'pushRow',
   pushRow: ROW
+} | 
+{
+  name: 'clear'
 }
    
 
@@ -69,6 +72,12 @@ export const TableReducer = (
       ...state,
       tableData
 
+    };
+  }
+  case 'clear':
+  {
+    return{
+      ...ContextReducerInitState
     };
   }
   }
